@@ -5,6 +5,8 @@ import Note from "./Note";
 import CreateArea from "./CreateArea";
 import Login from "./Login";
 import Register from "./Register";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 import VerifyEmail from "./VerifyEmail";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import axios from 'axios';
@@ -121,6 +123,8 @@ function App() {
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
         <Footer />
       </Router>

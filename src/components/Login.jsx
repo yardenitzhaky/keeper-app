@@ -94,7 +94,12 @@ function Login() {
           Remember Me
         </label>
 
-        {errors.server && <p className="error">{errors.server}</p>}
+        {errors.server && (
+  <p className="error" role="alert">
+    {errors.server}
+  </p>
+)}
+
 
         <button type="submit">Login</button>
       </form>

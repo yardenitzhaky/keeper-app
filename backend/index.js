@@ -257,6 +257,102 @@ Your App Team`,
   }
 });
 
+// Forgot Password Route
+app.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the user exists
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
+
+    if (!user) {
+      // For security, we return the same response whether the email exists or not
+      return res.status(200).json({ message: 'If that email is registered, a reset link has been sent.' });
+    }
+
+    // Generate a reset token
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = Date.now() + 3600000; // Token expires in 1 hour
+
+    // Update user with reset token and expiration
+    await db.query(
+      'UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE email = $3',
+      [token, expires, email]
+    );
+
+    // Send reset email
+    const resetUrl = `http://localhost:5000/reset-password/${token}`;
+
+    const mailOptions = {
+      to: email,
+      from: process.env.EMAIL_USER,
+      subject: 'Password Reset',
+      text: `You are receiving this email because a password reset request was made for your account.\n\n
+Please click on the following link, or paste it into your browser, to complete the process within one hour:\n\n
+${resetUrl}\n\n
+If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'If that email is registered, a reset link has been sent.' });
+  } catch (err) {
+    console.error('Forgot Password Error:', err);
+    res.status(500).json({ message: 'An error occurred. Please try again later.' });
+  }
+});
+
+app.post('/reset-password/:token', async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    // Find the user with the matching reset token and check if it's not expired
+    const result = await db.query(
+      'SELECT * FROM users WHERE reset_password_token = $1 AND reset_password_expires > $2',
+      [token, Date.now()]
+    );
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired password reset token.' });
+    }
+
+    // Validate the new password (reuse your password validation logic)
+    const isStrongPassword = validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    });
+
+    if (!isStrongPassword) {
+      return res.status(400).json({
+        message:
+          'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.',
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password and remove reset token fields
+    await db.query(
+      'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE id = $2',
+      [hashedPassword, user.id]
+    );
+
+    res.status(200).json({ message: 'Your password has been updated successfully.' });
+  } catch (err) {
+    console.error('Reset Password Error:', err);
+    res.status(500).json({ message: 'An error occurred. Please try again later.' });
+  }
+});
+
+
+
 
 
 app.post('/login', (req, res, next) => {

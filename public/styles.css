@@ -33,6 +33,8 @@ header h1 {
   align-items: center;
 }
 
+
+
 .app-title {
   display: flex;
   align-items: center;
@@ -76,7 +78,7 @@ footer {
 }
 
 footer p {
-  color: #fff;
+  color: "Black"; 
 }
 
 /* Note Styles */
@@ -355,7 +357,13 @@ form.create-note button {
 }
 
 .error {
-  color: red;
-  font-size: 0.9em;
-  margin-top: 5px;
+  color: #d8000c;
+  background-color: #ffeded;
+  padding: 10px;
+  border: 1px solid #d8000c;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 1em;
+  font-weight: bold;
 }
+
