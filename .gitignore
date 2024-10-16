@@ -322,3 +322,15 @@ Network Trash Folder
 Temporary Items
 .apdisk
 node_modules
+
+
+# Environment Variables
+.env
+
+# Node Modules
+node_modules/
+
+# Logs
+logs
+*.log
+
