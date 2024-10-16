@@ -9,6 +9,8 @@ import pgSession from 'connect-pg-simple';
 import passport from 'passport';
 import GoogleStrategy  from 'passport-google-oauth2';
 import validator from 'validator';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -38,6 +40,23 @@ app.use(cors({
 
 
 const PgSession = pgSession(session);
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail', // or any other email service
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Error configuring Nodemailer transporter:', error);
+  } else {
+    console.log('Nodemailer transporter is ready to send emails');
+  }
+});
+
 
 app.use(
   session({
@@ -69,7 +88,10 @@ passport.use("local",
   },
   async (identifier, password, done) => {
     try {
-      const result = await db.query('SELECT * FROM users WHERE username = $1 OR email = $1', [identifier]);
+      const result = await db.query(
+        'SELECT * FROM users WHERE (username = $1 OR email = $1) AND status = $2',
+        [identifier, 'active']
+      );
       const user = result.rows[0];
 
       if (!user) {
@@ -202,21 +224,33 @@ app.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationCode = crypto.randomBytes(20).toString('hex');
     const result = await db.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password, verification_code, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [username, email, hashedPassword, verificationCode, 'pending']
     );
     const user = result.rows[0];
 
-    // Log the user in
-    req.login(user, (err) => {
-      if (err) {
-        console.error('Login error after registration:', err);
-        return next(err);
-      }
-      // Registration and login successful
-      res.status(201).json({ message: 'User registered and logged in successfully.' });
-    });
+    const mailOptions = {
+      to: email,
+      from: process.env.EMAIL_USER,
+      subject: 'Email Verification',
+      text: `Hello ${username},
+
+Thank you for registering on our app. Please verify your email address by entering the following verification code in the app:
+
+Verification Code: ${verificationCode}
+
+If you did not request this, please ignore this email.
+
+Best regards,
+Your App Team`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+
+    res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
   } catch (err) {
     console.error('Registration error', err);
     res.status(500).send('Server error');
@@ -268,6 +302,35 @@ app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
   });
 });
+
+app.post('/verify-email', async (req, res) => {
+  const { email, verificationCode } = req.body;
+
+  try {
+    // Find the user with the provided email and verification code
+    const result = await db.query(
+      'SELECT * FROM users WHERE email = $1 AND verification_code = $2',
+      [email, verificationCode]
+    );
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid verification code.' });
+    }
+
+    // Update the user's status to 'active' and clear the verification code
+    await db.query(
+      'UPDATE users SET status = $1, verification_code = NULL WHERE id = $2',
+      ['active', user.id]
+    );
+
+    res.status(200).json({ message: 'Email verified successfully. You can now log in.' });
+  } catch (err) {
+    console.error('Email verification error', err);
+    res.status(500).send('Server error');
+  }
+});
+
 
 
 app.get("/", async (req, res) => {

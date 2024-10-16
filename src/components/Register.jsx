@@ -24,7 +24,7 @@ function Register() {
         email,
         password,
       }, { withCredentials: true });
-      navigate("/login"); // Redirect to login page after registration
+      navigate("/verify-email", { state: { email } });
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error.message);
       // Handle server-side errors
