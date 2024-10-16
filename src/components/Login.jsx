@@ -3,24 +3,56 @@ import { AuthContext } from "./AuthContext";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
+
 function Login() {
-  const [username, setUsername] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login attempt started for user:", username, "and the remember me status is:", rememberMe);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    console.log("Login attempt started for user:", identifier, "and the remember me status is:", rememberMe);
     try {
-      await login(username, password, rememberMe);
+      await login(identifier, password, rememberMe);
       console.log("User logged in successfully");
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
+      // Inside the catch block
+      setErrors({
+        server:
+          error.response?.data.message ||
+          error.response?.data ||
+          error.message ||
+          'Login failed',
+  });
     }
   };
+
+  const validateForm = () => {
+    const errors = {};
+
+    // Identifier validation
+    if (!identifier.trim()) {
+      errors.identifier = "Username or email is required";
+    }
+
+    // Password validation
+    if (!password) {
+      errors.password = "Password is required";
+    }
+
+    return errors;
+  };
+
 
   
 
@@ -31,13 +63,15 @@ function Login() {
       <form onSubmit={handleLogin}>
         <input
           type="text"
-          id="username"
-          name="username"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          id="identifier"
+          name="identifier"
+          placeholder="Username or Email"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
         />
+        {errors.identifier && <p className="error">{errors.identifier}</p>}
+
         <input
           type="password"
           id="password"
@@ -47,6 +81,8 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        {errors.password && <p className="error">{errors.password}</p>}
+
         <label>
           <input
             type="checkbox"
@@ -57,6 +93,9 @@ function Login() {
           />
           Remember Me
         </label>
+
+        {errors.server && <p className="error">{errors.server}</p>}
+
         <button type="submit">Login</button>
       </form>
       <a href="http://localhost:3000/auth/google">
@@ -67,6 +106,9 @@ function Login() {
       </a>
       <p>
         Don't have an account? <Link to="/Register">Register here</Link>
+      </p>
+      <p>
+        <Link to="/forgot-password">Forgot Password?</Link>
       </p>
     </div>
   );

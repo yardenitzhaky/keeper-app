@@ -8,6 +8,7 @@ import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import passport from 'passport';
 import GoogleStrategy  from 'passport-google-oauth2';
+import validator from 'validator';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -27,13 +28,13 @@ const db = new pg.Client({
 
 db.connect();
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(cors({
   origin: true, // Replace with your frontend URL if different
   credentials: true
 }));
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
 
 
 const PgSession = pgSession(session);
@@ -62,13 +63,17 @@ app.use(passport.session());
 
 
 passport.use("local", 
-  new LocalStrategy(async (username, password, done) => {
+  new LocalStrategy({
+    usernameField: 'identifier', 
+    passwordField: 'password',
+  },
+  async (identifier, password, done) => {
     try {
-      const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+      const result = await db.query('SELECT * FROM users WHERE username = $1 OR email = $1', [identifier]);
       const user = result.rows[0];
 
       if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: 'Incorrect username or email.' });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -99,8 +104,8 @@ async (request, accessToken, refreshToken, profile, done) => {
     if (!user) {
       // If user doesn't exist, create a new user in your database
       const insertResult = await db.query(
-        'INSERT INTO users (google_id, username, password) VALUES ($1, $2, $3) RETURNING *',
-        [profile.id, profile.displayName, profile.id]
+        'INSERT INTO users (google_id, username, password, email) VALUES ($1, $2, $3, $4) RETURNING *',
+        [profile.id, profile.displayName, profile.id, "google email"]
       );
       user = insertResult.rows[0];
     }
@@ -114,17 +119,21 @@ async (request, accessToken, refreshToken, profile, done) => {
 
 
 passport.serializeUser((user, done) => {
+  console.log('Serializing user:', user);
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log('Deserializing user with id:', id);
   try {
     const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
     done(null, result.rows[0]);
   } catch (err) {
+    console.error('Error in deserializeUser:', err);
     done(err);
   }
 });
+
 
 
 // Initiate Google OAuth login
@@ -153,23 +162,75 @@ app.get('/auth/google/callback',
 
 
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
+
+  // Server-side validation
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  // Validate email
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ message: 'Invalid email address.' });
+  }
+
+  // Check if the password is strong
+  const isStrongPassword = validator.isStrongPassword(password, {
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  });
+
+  if (!isStrongPassword) {
+    return res.status(400).json({
+      message:
+        'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.',
+    });
+  }
 
   try {
+    // Check if the username or email already exists
+    const userExists = await db.query('SELECT * FROM users WHERE username = $1 OR email = $2', [
+      username,
+      email,
+    ]);
+
+    if (userExists.rows.length > 0) {
+      return res.status(400).json({ message: 'Username or email already exists.' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await db.query(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
-      [username, hashedPassword]
+      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
+      [username, email, hashedPassword]
     );
-    res.status(201).json(result.rows[0]);
+    const user = result.rows[0];
+
+    // Log the user in
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Login error after registration:', err);
+        return next(err);
+      }
+      // Registration and login successful
+      res.status(201).json({ message: 'User registered and logged in successfully.' });
+    });
   } catch (err) {
     console.error('Registration error', err);
     res.status(500).send('Server error');
   }
 });
 
+
+
 app.post('/login', (req, res, next) => {
-  console.log("Login request received for user:", req.body.username);
+  console.log("Login request received for user:", req.body.identifier);
+  const { identifier, password } = req.body;
+  if (!identifier || !password) {
+    return res.status(400).json({ message: 'Missing credentials' });
+  }
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       console.error("Authentication error:", err);

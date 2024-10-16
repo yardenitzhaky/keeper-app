@@ -7,11 +7,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
 
-  const login = async (username, password, rememberMe) => {
+  const login = async (identifier, password, rememberMe) => {
     try {
       const response = await axios.post(
         "http://localhost:3000/login",
-        { username, password, rememberMe },
+        { identifier, password, rememberMe },
         { withCredentials: true }
       );
       setUser(response.data.user);

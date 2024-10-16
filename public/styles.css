@@ -353,3 +353,9 @@ form.create-note button {
     padding: 30px;
   }
 }
+
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
