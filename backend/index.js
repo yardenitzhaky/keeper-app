@@ -61,7 +61,9 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 
@@ -534,8 +536,11 @@ app.put("/notes/:id", async (req, res) => {
 });
 
 app.get('/me', (req, res) => {
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
   if (req.isAuthenticated()) {
-    res.json({ user: req.user });
+    const { id, username, email } = req.user;
+    res.json({ user: { id, username, email } });
   } else {
     res.status(401).json({ message: 'Not authenticated' });
   }
