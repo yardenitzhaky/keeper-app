@@ -22,6 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 const app = express();
+app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -88,10 +89,6 @@ transporter.verify((error, success) => {
 
 app.use(
   session({
-    store: new PgSession({
-      pool: db,
-      tableName: 'session',
-    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -102,16 +99,20 @@ app.use(
       secure: true,   // Set to true if using HTTPS
       domain: '.onrender.com'
     },
+    store: new PgSession({
+      pool: db,
+      tableName: 'session',
+    }),
   })
 );
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', 'https://keeper-frontend-36zj.onrender.com');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', true);
+//   res.header('Access-Control-Allow-Origin', 'https://keeper-frontend-36zj.onrender.com');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+//   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+//   next();
+// });
 
 
 app.use(passport.initialize());
