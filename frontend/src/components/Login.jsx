@@ -62,7 +62,7 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <img src="../logo.PNG" alt="Logo" className="logo" />
+      <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -109,7 +109,7 @@ function Login() {
       </form>
       <a href="${API_URL}/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
         <button className="social-login-button">
-          <img src="../google_logo.png" alt="Google icon" />
+          <img src="/images/google_logo.png" alt="Google icon" />
           Sign in with Google
         </button>
       </a>
