@@ -34,7 +34,7 @@ function App() {
     async function fetchNotes() {
       try {
         if (user) {
-          const response = await axios.get("${API_URL}/notes", {withCredentials: true,});
+          const response = await axios.get(`${API_URL}/notes`, {withCredentials: true,});
           console.log("Notes fetched:", response.data);
           setNotes(response.data);
         }
@@ -48,7 +48,7 @@ function App() {
   async function addNote(newNote) {
     try {
       const response = await axios.post(
-        "${API_URL}/add",
+        `${API_URL}/add`,
         newNote,
         { withCredentials: true }
       );

@@ -23,7 +23,7 @@ function Register() {
       return;
     }
     try {
-      await axios.post("${API_URL}/register", {
+      await axios.post(`${API_URL}/register`, {
         username,
         email,
         password,

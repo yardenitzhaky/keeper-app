@@ -22,7 +22,7 @@ function VerifyEmail() {
   const handleVerification = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("${API_URL}/verify-email", {
+      const response = await axios.post(`${API_URL}/verify-email`, {
         email,
         verificationCode,
       });
