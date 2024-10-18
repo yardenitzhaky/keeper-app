@@ -47,9 +47,9 @@ function Login() {
     }
     console.log("Login attempt started for user:", identifier, "and the remember me status is:", rememberMe);
     try {
-      await login(identifier, password, rememberMe);
+      const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully");
-      setUser(user);
+      setUser(loggedInUser);
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
