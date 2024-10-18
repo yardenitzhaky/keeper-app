@@ -22,7 +22,7 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [editNote, setEditNote] = useState(null);
-  const { user, setUser, loading } = useContext(AuthContext);
+  const { user, setUser, loading, checkAuthStatus } = useContext(AuthContext);
 
   useEffect(() => {
     checkAuthStatus();
