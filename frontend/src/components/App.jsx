@@ -36,7 +36,7 @@ function App() {
   
   async function fetchNotes() {
     try {
-      const response = await axios.get(`${API_URL}/notes`);
+      const response = await axios.get(`${API_URL}/notes`, { withCredentials: true });
       setNotes(response.data);
     } catch (error) {
       console.error("Error fetching notes:", error);

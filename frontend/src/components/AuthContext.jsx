@@ -41,10 +41,9 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Add this function
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get(`${API_URL}/me`);
+      const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
       console.log("User authenticated:", response.data.user);
       setUser(response.data.user);
     } catch (error) {
@@ -54,7 +53,6 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     checkAuthStatus();
   }, []);
