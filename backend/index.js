@@ -99,7 +99,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "none", // Allows cross-origin cookies
-      secure: false   // Set to true if using HTTPS
+      secure: true   // Set to true if using HTTPS
     },
   })
 );
@@ -385,36 +385,96 @@ app.post('/reset-password/:token', async (req, res) => {
 
 
 
+// app.post('/login', (req, res, next) => {
+//   console.log("Login request received for user:", req.body.identifier);
+//   const { identifier, password } = req.body;
+//   if (!identifier || !password) {
+//     return res.status(400).json({ message: 'Missing credentials' });
+//   }
+//   passport.authenticate('local', (err, user, info) => {
+//     if (err) {
+//       console.error("Authentication error:", err);
+//       return res.status(500).json({ message: 'Server error', error: err });
+//     }
+//     if (!user) {
+//       console.log("Authentication failed:", info.message);
+//       return res.status(400).json({ message: info.message || 'Login failed' });
+//     }
+//     req.logIn(user, (err) => {
+//       if (err) {
+//         console.error("Login error:", err);
+//         return res.status(500).json({ message: 'Login failed', error: err });
+//       }
+
+//       // Adjust session expiration based on "remember me"
+//       if (req.body.rememberMe) {
+//         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+//       } else {
+//         req.session.cookie.expires = null; // Session ends when the browser is closed
+//       }
+
+//       console.log("User logged in successfully:", user.username);
+//       return res.status(200).json({ message: 'Logged in successfully', user });
+//     });
+//   })(req, res, next);
+// });
+
 app.post('/login', (req, res, next) => {
   console.log("Login request received for user:", req.body.identifier);
-  const { identifier, password } = req.body;
+  const { identifier, password, rememberMe } = req.body;
+  
   if (!identifier || !password) {
     return res.status(400).json({ message: 'Missing credentials' });
   }
+  
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       console.error("Authentication error:", err);
       return res.status(500).json({ message: 'Server error', error: err });
     }
+    
     if (!user) {
       console.log("Authentication failed:", info.message);
       return res.status(400).json({ message: info.message || 'Login failed' });
     }
+    
     req.logIn(user, (err) => {
       if (err) {
         console.error("Login error:", err);
         return res.status(500).json({ message: 'Login failed', error: err });
       }
-
+      
       // Adjust session expiration based on "remember me"
-      if (req.body.rememberMe) {
+      if (rememberMe) {
         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
       } else {
         req.session.cookie.expires = null; // Session ends when the browser is closed
       }
-
+      
       console.log("User logged in successfully:", user.username);
-      return res.status(200).json({ message: 'Logged in successfully', user });
+      console.log("Session ID:", req.sessionID);
+      console.log("Session:", JSON.stringify(req.session, null, 2));
+      
+      // Save the session explicitly
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: 'Session save failed', error: err });
+        }
+        
+        // Return user info without sensitive data
+        const safeUser = {
+          id: user.id,
+          username: user.username,
+          email: user.email
+        };
+        
+        return res.status(200).json({ 
+          message: 'Logged in successfully', 
+          user: safeUser,
+          sessionID: req.sessionID
+        });
+      });
     });
   })(req, res, next);
 });
@@ -470,6 +530,9 @@ app.get("/", async (req, res) => {
 });
 
 app.get('/notes', async (req, res) => {
+  if (!req.isAuthenticated() || !req.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
 
   try {
     const result = await db.query('SELECT * FROM notes WHERE user_id = $1;', [req.user.id]);
@@ -542,6 +605,14 @@ app.get('/me', (req, res) => {
   } else {
     res.status(401).json({ message: 'Not authenticated' });
   }
+});
+
+app.use((req, res, next) => {
+  console.log('Session ID:', req.sessionID);
+  console.log('Session:', JSON.stringify(req.session, null, 2));
+  console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+  console.log('Is Authenticated:', req.isAuthenticated());
+  next();
 });
 
 
