@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
 axios.defaults.withCredentials = true;
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -14,7 +14,29 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { login, handleGoogleAuthSuccess } = useContext(AuthContext);
+  const location = useLocation();
+  const { login, user, checkAuth } = useContext(AuthContext);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const authenticatedUser = await checkAuth();
+      if (authenticatedUser) {
+        navigate('/');
+      }
+    };
+
+    checkAuthentication();
+  }, [checkAuth, navigate]);
+
+  useEffect(() => {
+    // Check if redirected from Google OAuth
+    const urlParams = new URLSearchParams(location.search);
+    const isGoogleAuth = urlParams.get('google_auth') === 'success';
+
+    if (isGoogleAuth) {
+      checkAuth();
+    }
+  }, [location, checkAuth]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -61,6 +83,11 @@ function Login() {
     e.preventDefault();
     window.location.href = `${API_URL}/auth/google`;
   };
+
+  if (user) {
+    navigate('/');
+    return null;
+  }
 
   
 

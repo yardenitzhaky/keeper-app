@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
+import { useNavigate } from "react-router-dom";
+
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -10,6 +12,8 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
+  const navigate = useNavigate();
+
 
   const login = async (identifier, password, rememberMe) => {
     try {
@@ -34,41 +38,33 @@ export function AuthProvider({ children }) {
         { withCredentials: true }
       );
       setUser(null);
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error.response?.data || error.message);
     }
   };
 
-  const handleGoogleAuthSuccess = async () => {
+  const checkAuth = async () => {
     try {
-      const response = await axios.get("${API_URL}/me", { withCredentials: true });
+      const response = await axios.get(`${API_URL}/me`);
       setUser(response.data.user);
+      return response.data.user;
     } catch (error) {
-      console.error("Error fetching user after Google auth:", error);
+      console.error("Error checking auth:", error);
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    console.log("Checking authentication status...");  // Add this log to check if useEffect runs
-  
-    axios
-      .get("${API_URL}/me", { withCredentials: true })  // Add withCredentials to include session cookies
-      .then((response) => {
-        console.log("User authenticated:", response.data.user);  // Log the user data
-        setUser(response.data.user); // Set the user state
-      })
-      .catch((error) => {
-        console.log("User not authenticated:", error.response?.data || error.message);  // Log the error
-        setUser(null); // Set user to null if not authenticated
-      })
-      .finally(() => {
-        setLoading(false); // Loading state is complete
-      });
+    checkAuth();
   }, []);
   
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, logout, checkAuth}}>
       {children}
     </AuthContext.Provider>
   );
