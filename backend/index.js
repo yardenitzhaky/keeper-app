@@ -35,6 +35,8 @@ const db = new pg.Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
+
+
 db.connect()
   .then(() => console.log('Connected to the database'))
   .catch(err => console.error('Error connecting to the database:', err));
