@@ -538,6 +538,7 @@ app.put("/notes/:id", async (req, res) => {
 app.get('/me', (req, res) => {
   console.log('Session:', req.session);
   console.log('User:', req.user);
+  console.log('Is Authenticated:', req.isAuthenticated());
   if (req.isAuthenticated()) {
     const { id, username, email } = req.user;
     res.json({ user: { id, username, email } });

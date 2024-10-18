@@ -49,6 +49,7 @@ function Login() {
     try {
       await login(identifier, password, rememberMe);
       console.log("User logged in successfully");
+      setUser(user);
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
