@@ -1,26 +1,20 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
-import { useNavigate } from "react-router-dom";
-
-
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
-
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true);
 
   const login = async (identifier, password, rememberMe) => {
     try {
       const response = await axios.post(
-        "${API_URL}/login",
-        { identifier, password, rememberMe },
-        { withCredentials: true }
+        `${API_URL}/login`,
+        { identifier, password, rememberMe }
       );
       setUser(response.data.user);
       return response.data.user;
@@ -32,13 +26,8 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await axios.post(
-        "${API_URL}/logout",
-        {},
-        { withCredentials: true }
-      );
+      await axios.post(`${API_URL}/logout`);
       setUser(null);
-      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error.response?.data || error.message);
     }
@@ -61,10 +50,9 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     checkAuth();
   }, []);
-  
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout, checkAuth}}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, logout, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

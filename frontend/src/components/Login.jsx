@@ -29,14 +29,17 @@ function Login() {
   }, [checkAuth, navigate]);
 
   useEffect(() => {
-    // Check if redirected from Google OAuth
     const urlParams = new URLSearchParams(location.search);
     const isGoogleAuth = urlParams.get('google_auth') === 'success';
 
     if (isGoogleAuth) {
-      checkAuth();
+      checkAuth().then(authenticatedUser => {
+        if (authenticatedUser) {
+          navigate('/');
+        }
+      });
     }
-  }, [location, checkAuth]);
+  }, [location, checkAuth, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
