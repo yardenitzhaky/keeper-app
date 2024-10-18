@@ -34,30 +34,33 @@ export function AuthProvider({ children }) {
     try {
       const response = await axios.get(`${API_URL}/me`);
       setUser(response.data.user);
+      return response.data.user;
     } catch (error) {
       console.error("Error fetching user after Google auth:", error.response?.data || error.message);
+      throw error;
+    }
+  };
+
+  // Add this function
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/me`);
+      console.log("User authenticated:", response.data.user);
+      setUser(response.data.user);
+    } catch (error) {
+      console.log("User not authenticated:", error.response?.data || error.message);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/me`);
-        console.log("User authenticated:", response.data.user);
-        setUser(response.data.user);
-      } catch (error) {
-        console.log("User not authenticated:", error.response?.data || error.message);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAuthStatus();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess, checkAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );

@@ -20,12 +20,22 @@ function Login() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const googleAuth = queryParams.get('google_auth');
-
     if (googleAuth === 'success') {
-      handleGoogleAuthSuccess();
-      navigate('/'); // or wherever you want to redirect after successful login
+      handleGoogleAuthSuccess().then(() => {
+        navigate('/');
+      }).catch(error => {
+        console.error("Error handling Google auth success:", error);
+        setErrors({ server: "Failed to authenticate with Google. Please try again." });
+      });
     }
   }, [location, handleGoogleAuthSuccess, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
 
 
   const handleLogin = async (e) => {
