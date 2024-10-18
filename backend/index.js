@@ -48,7 +48,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:5000', // Your frontend URL
+  origin: 'https://keeper-frontend-36zj.onrender.com', // Your frontend URL
   credentials: true
 }));
 
@@ -197,7 +197,7 @@ app.get('/auth/google/callback',
     //   }
       
       // Successful login, redirect to the frontend
-      res.redirect('http://localhost:5000');
+      res.redirect('https://keeper-frontend-36zj.onrender.com');
     }
 );
 
@@ -303,7 +303,7 @@ app.post('/forgot-password', async (req, res) => {
     );
 
     // Send reset email
-    const resetUrl = `http://localhost:5000/reset-password/${token}`;
+    const resetUrl = `https://keeper-frontend-36zj.onrender.com/reset-password/${token}`;
 
     const mailOptions = {
       to: email,
