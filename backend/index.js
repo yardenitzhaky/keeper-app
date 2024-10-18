@@ -12,6 +12,7 @@ import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import exp from "constants";
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -25,12 +26,8 @@ const port = process.env.PORT || 3000;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-let connectionString;
-if (isProduction) {
-  connectionString = process.env.DATABASE_URL;
-} else {
-  connectionString = `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
-}
+const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+
 
 
 const db = new pg.Pool({
@@ -41,6 +38,8 @@ const db = new pg.Pool({
 db.connect()
   .then(() => console.log('Connected to the database'))
   .catch(err => console.error('Error connecting to the database:', err));
+
+export default db;
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
