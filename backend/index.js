@@ -12,23 +12,36 @@ import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config();
+
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+const isProduction = process.env.NODE_ENV === 'production';
 
-const db = new pg.Client({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DATABASE,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT,
+let connectionString;
+if (isProduction) {
+  connectionString = process.env.DATABASE_URL;
+} else {
+  connectionString = `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+}
+
+
+const db = new pg.Pool({
+  connectionString: connectionString,
+  ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
-db.connect();
+db.connect()
+  .then(() => console.log('Connected to the database'))
+  .catch(err => console.error('Error connecting to the database:', err));
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -71,7 +84,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "none", // Allows cross-origin cookies
-      secure: false,    // Set to true if using HTTPS
+      secure: isProduction,    // Set to true if using HTTPS
     },
   })
 );
