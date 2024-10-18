@@ -15,7 +15,7 @@ function Login() {
   const [errors, setErrors] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, handleGoogleAuthSuccess, user, setUser } = useContext(AuthContext);
+  const { login, handleGoogleAuthSuccess, user, setUser, checkAuthStatus } = useContext(AuthContext);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
