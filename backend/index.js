@@ -470,9 +470,6 @@ app.get("/", async (req, res) => {
 });
 
 app.get('/notes', async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
 
   try {
     const result = await db.query('SELECT * FROM notes WHERE user_id = $1;', [req.user.id]);
