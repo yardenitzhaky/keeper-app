@@ -57,6 +57,10 @@ function Login() {
     return errors;
   };
 
+const handleGoogleSignIn = (e) => {
+    e.preventDefault();
+    window.location.href = `${API_URL}/auth/google`;
+  };
 
   
 
@@ -107,13 +111,11 @@ function Login() {
 
         <button type="submit">Login</button>
       </form>
-      <a href="${API_URL}/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
-        <button className="social-login-button">
+      <button onClick={handleGoogleSignIn} className="social-login-button">
           <img src="/images/google_logo.png" alt="Google icon" />
           Sign in with Google
         </button>
-      </a>
-      <p>
+            <p>
         Don't have an account? <Link to="/Register">Register here</Link>
       </p>
       <p>
