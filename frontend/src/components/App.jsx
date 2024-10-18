@@ -10,6 +10,7 @@ import ResetPassword from "./ResetPassword";
 import VerifyEmail from "./VerifyEmail";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 import { AuthContext } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute
 

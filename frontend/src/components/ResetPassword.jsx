@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 import { useParams, useNavigate } from "react-router-dom";
 
 function ResetPassword() {

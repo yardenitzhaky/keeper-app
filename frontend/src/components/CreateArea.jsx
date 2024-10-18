@@ -5,6 +5,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 
 function CreateArea(props) {

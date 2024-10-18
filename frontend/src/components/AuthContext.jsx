@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+axios.defaults.withCredentials = true;
+
 
 export const AuthContext = createContext();
 
@@ -35,6 +37,15 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const handleGoogleAuthSuccess = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/me", { withCredentials: true });
+      setUser(response.data.user);
+    } catch (error) {
+      console.error("Error fetching user after Google auth:", error);
+    }
+  };
+
   useEffect(() => {
     console.log("Checking authentication status...");  // Add this log to check if useEffect runs
   
@@ -55,7 +66,7 @@ export function AuthProvider({ children }) {
   
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess }}>
       {children}
     </AuthContext.Provider>
   );

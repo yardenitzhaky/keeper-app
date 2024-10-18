@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
 
 
@@ -10,7 +11,7 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, handleGoogleAuthSuccess } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -103,7 +104,7 @@ function Login() {
 
         <button type="submit">Login</button>
       </form>
-      <a href="http://localhost:3000/auth/google">
+      <a href="http://localhost:3000/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
         <button className="social-login-button">
           <img src="../google_logo.png" alt="Google icon" />
           Sign in with Google

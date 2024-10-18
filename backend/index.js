@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(cors({
-  origin: true, // Replace with your frontend URL if different
+  origin: 'http://localhost:5000', // Your frontend URL
   credentials: true
 }));
 
@@ -70,7 +70,7 @@ app.use(
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "none", // Allows cross-origin cookies
+      sameSite: "lax", // Allows cross-origin cookies
       secure: false,    // Set to true if using HTTPS
     },
   })
@@ -126,11 +126,19 @@ async (request, accessToken, refreshToken, profile, done) => {
     if (!user) {
       // If user doesn't exist, create a new user in your database
       const insertResult = await db.query(
-        'INSERT INTO users (google_id, username, password, email) VALUES ($1, $2, $3, $4) RETURNING *',
-        [profile.id, profile.displayName, profile.id, "google email"]
+        'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [profile.id, profile.displayName, profile.id, "google email", "active"]
       );
       user = insertResult.rows[0];
+    } else if (user.status !== 'active') {
+      // If the user exists but their status is not active, update it to active
+      const updateResult = await db.query(
+        'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
+        ['active', user.id]
+      );
+      user = updateResult.rows[0];
     }
+
 
     return done(null, user);  // Continue with the user object
   } catch (err) {
@@ -159,7 +167,7 @@ passport.deserializeUser(async (id, done) => {
 
 
 // Initiate Google OAuth login
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
@@ -167,17 +175,16 @@ app.get('/auth/google/callback',
     // Log the authenticated user via Google
     console.log("Google login successful for user:", req.user);
 
-    // Manually log the user in to ensure the session is persisted
-    req.logIn(req.user, (err) => {
-      if (err) {
-        console.error('Error logging in the user after Google authentication:', err);
-        return res.redirect('/login');
-      }
+    // // Manually log the user in to ensure the session is persisted
+    // req.logIn(req.user, (err) => {
+    //   if (err) {
+    //     console.error('Error logging in the user after Google authentication:', err);
+    //     return res.redirect('/login');
+    //   }
       
       // Successful login, redirect to the frontend
-      return res.redirect('http://localhost:5000');
-    });
-  }
+      res.redirect('http://localhost:5000');
+    }
 );
 
 
