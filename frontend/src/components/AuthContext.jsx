@@ -13,8 +13,10 @@ export function AuthProvider({ children }) {
   const login = async (identifier, password, rememberMe) => {
     try {
       const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe });
-      setUser(response.data.user);
-      return response.data.user;
+      const user = response.data.user;
+      setUser(user);
+      console.log("User set in AuthContext:", user);
+      return user;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       throw error;

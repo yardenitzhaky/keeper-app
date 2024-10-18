@@ -50,6 +50,7 @@ function Login() {
       const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully");
       setUser(loggedInUser);
+      await checkAuthStatus(); // Add this line
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);

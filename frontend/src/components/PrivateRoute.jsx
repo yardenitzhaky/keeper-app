@@ -14,6 +14,9 @@ function PrivateRoute({ children }) {
     return <div>Loading...</div>;
   }
 
+  console.log("PrivateRoute - User:", user);
+
+
   if (!user) {
     // Redirect to login if the user is not authenticated
     return <Navigate to="/login" />;
