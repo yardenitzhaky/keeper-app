@@ -99,7 +99,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "none", // Allows cross-origin cookies
-      secure: true    // Set to true if using HTTPS
+      secure: false   // Set to true if using HTTPS
     },
   })
 );

@@ -27,28 +27,21 @@ function App() {
   useEffect(() => {
     checkAuthStatus();
   }, []);
-
-
-
+  
   useEffect(() => {
-
-    if (!user) {
-      return;
+    if (user) {
+      fetchNotes();
     }
-
-    async function fetchNotes() {
-      try {
-        if (user) {
-          const response = await axios.get(`${API_URL}/notes`, {withCredentials: true,});
-          console.log("Notes fetched:", response.data);
-          setNotes(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching notes:", error);
-      }
-    }
-    fetchNotes();
   }, [user]);
+  
+  async function fetchNotes() {
+    try {
+      const response = await axios.get(`${API_URL}/notes`);
+      setNotes(response.data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
+  }
   
   async function addNote(newNote) {
     try {
