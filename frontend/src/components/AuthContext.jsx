@@ -45,19 +45,20 @@ export function AuthProvider({ children }) {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get(`${API_URL}/me`, { withCredentials: true });
-      console.log("User authenticated:", response.data.user);
-      setUser(response.data.user);
+      const response = await axios.get(`${API_URL}/check-session`, { withCredentials: true });
+      console.log("Auth status check response:", response.data);
+      if (response.data.isAuthenticated && response.data.user) {
+        setUser(response.data.user);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
-      console.log("User not authenticated:", error.response?.data || error.message);
+      console.log("Error checking auth status:", error.response?.data || error.message);
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess, checkAuthStatus }}>
