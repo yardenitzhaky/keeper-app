@@ -77,7 +77,7 @@ function Register() {
 
   return (
     <div className="auth-container">
-      <img src="../logo.PNG" alt="Logo" className="logo" />
+      <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Register</h2>
       <form onSubmit={handleRegister}>
         <input
