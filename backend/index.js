@@ -47,8 +47,20 @@ export default db;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
+const allowedOrigins = [
+  'https://keeper-frontend-36zj.onrender.com',
+  'https://keeper-backend-kgj9.onrender.com',
+  // Add any other origins you need, including local development URLs
+];
+
 app.use(cors({
-  origin: 'https://keeper-frontend-36zj.onrender.com', // Your frontend URL
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
