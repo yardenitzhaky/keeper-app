@@ -51,7 +51,9 @@ function Login() {
       console.log("User logged in successfully");
       setUser(loggedInUser);
       await checkAuthStatus(); // Add this line
-      navigate("/");
+      setTimeout(() => {
+        navigate("/");
+      }, 100);
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       // Inside the catch block
