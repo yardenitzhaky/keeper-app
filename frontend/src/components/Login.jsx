@@ -13,8 +13,20 @@ function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
+  const location = useLocation();
   const navigate = useNavigate();
   const { login, handleGoogleAuthSuccess } = useContext(AuthContext);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const googleAuth = queryParams.get('google_auth');
+
+    if (googleAuth === 'success') {
+      handleGoogleAuthSuccess();
+      navigate('/'); // or wherever you want to redirect after successful login
+    }
+  }, [location, handleGoogleAuthSuccess, navigate]);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -198,19 +198,15 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    // Log the authenticated user via Google
     console.log("Google login successful for user:", req.user);
-
-    // // Manually log the user in to ensure the session is persisted
-    // req.logIn(req.user, (err) => {
-    //   if (err) {
-    //     console.error('Error logging in the user after Google authentication:', err);
-    //     return res.redirect('/login');
-    //   }
-      
-      // Successful login, redirect to the frontend
-      res.redirect('https://keeper-frontend-36zj.onrender.com');
-    }
+    req.login(req.user, (err) => {
+      if (err) {
+        console.error("Error logging in the user after Google authentication:", err);
+        return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
+      }
+      res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
+    });
+  }
 );
 
 
