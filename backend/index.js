@@ -99,7 +99,8 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "none", // Allows cross-origin cookies
-      secure: true   // Set to true if using HTTPS
+      secure: true,   // Set to true if using HTTPS
+      domain: '.onrender.com'
     },
   })
 );
@@ -193,6 +194,11 @@ passport.deserializeUser(async (id, done) => {
   console.log('Deserializing user with id:', id);
   try {
     const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      console.log('No user found with id:', id);
+      return done(null, false);
+    }
+    console.log('Deserialized user:', result.rows[0]);
     done(null, result.rows[0]);
   } catch (err) {
     console.error('Error in deserializeUser:', err);
@@ -621,6 +627,16 @@ app.use((req, res, next) => {
   console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
   console.log('Is Authenticated:', req.isAuthenticated());
   next();
+});
+
+app.get('/check-session', (req, res) => {
+  console.log('Session check - Session:', req.session);
+  console.log('Session check - User:', req.user);
+  console.log('Session check - Is Authenticated:', req.isAuthenticated());
+  res.json({
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user
+  });
 });
 
 
