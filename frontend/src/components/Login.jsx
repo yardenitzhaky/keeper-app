@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
 axios.defaults.withCredentials = true;
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -14,32 +14,7 @@ function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const location = useLocation();
-  const { login, user, checkAuth } = useContext(AuthContext);
-
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      const authenticatedUser = await checkAuth();
-      if (authenticatedUser) {
-        navigate('/');
-      }
-    };
-
-    checkAuthentication();
-  }, [checkAuth, navigate]);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const isGoogleAuth = urlParams.get('google_auth') === 'success';
-
-    if (isGoogleAuth) {
-      checkAuth().then(authenticatedUser => {
-        if (authenticatedUser) {
-          navigate('/');
-        }
-      });
-    }
-  }, [location, checkAuth, navigate]);
+  const { login, handleGoogleAuthSuccess } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,15 +57,6 @@ function Login() {
     return errors;
   };
 
-  const handleGoogleSignIn = (e) => {
-    e.preventDefault();
-    window.location.href = `${API_URL}/auth/google`;
-  };
-
-  if (user) {
-    navigate('/');
-    return null;
-  }
 
   
 
@@ -141,10 +107,12 @@ function Login() {
 
         <button type="submit">Login</button>
       </form>
-      <button onClick={handleGoogleSignIn} className="social-login-button">
-        <img src="/images/google_logo.png" alt="Google icon" />
-        Sign in with Google
-      </button>
+      <a href="${API_URL}/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
+        <button className="social-login-button">
+          <img src="/images/google_logo.png" alt="Google icon" />
+          Sign in with Google
+        </button>
+      </a>
       <p>
         Don't have an account? <Link to="/Register">Register here</Link>
       </p>
