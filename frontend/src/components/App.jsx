@@ -15,9 +15,7 @@ import { AuthContext } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute
 
 
-
-
-
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
 
 function App() {
@@ -36,7 +34,7 @@ function App() {
     async function fetchNotes() {
       try {
         if (user) {
-          const response = await axios.get("http://localhost:3000/notes", {withCredentials: true,});
+          const response = await axios.get("${API_URL}/notes", {withCredentials: true,});
           console.log("Notes fetched:", response.data);
           setNotes(response.data);
         }
@@ -50,7 +48,7 @@ function App() {
   async function addNote(newNote) {
     try {
       const response = await axios.post(
-        "http://localhost:3000/add",
+        "${API_URL}/add",
         newNote,
         { withCredentials: true }
       );
@@ -64,7 +62,7 @@ function App() {
 
   async function deleteNote(id) {
     try {
-      await axios.delete(`http://localhost:3000/notes/${id}`, {withCredentials: true,} );
+      await axios.delete(`${API_URL}/notes/${id}`, {withCredentials: true,} );
       setNotes(prevNotes => {
         return prevNotes.filter((noteItem) => noteItem.id !== id);
       });
@@ -83,7 +81,7 @@ function App() {
 
   async function updateNote(updatedNote) {
     try {
-      const response = await axios.put(`http://localhost:3000/notes/${updatedNote.id}`,{withCredentials: true}, updatedNote,);
+      const response = await axios.put(`${API_URL}/notes/${updatedNote.id}`,{withCredentials: true}, updatedNote,);
       setNotes(prevNotes =>
         prevNotes.map(noteItem =>
           noteItem.id === updatedNote.id ? response.data : noteItem

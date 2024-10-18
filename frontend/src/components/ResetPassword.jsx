@@ -3,6 +3,9 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useParams, useNavigate } from "react-router-dom";
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
 function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ function ResetPassword() {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/reset-password/${token}`,
+        `${API_URL}/reset-password/${token}`,
         { password },
         { withCredentials: true }
       );

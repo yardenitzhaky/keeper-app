@@ -4,6 +4,9 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
 
 function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -104,7 +107,7 @@ function Login() {
 
         <button type="submit">Login</button>
       </form>
-      <a href="http://localhost:3000/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
+      <a href="${API_URL}/auth/google" onClick={() => setTimeout(handleGoogleAuthSuccess, 1000)}>
         <button className="social-login-button">
           <img src="../google_logo.png" alt="Google icon" />
           Sign in with Google

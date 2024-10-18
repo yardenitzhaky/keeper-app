@@ -3,6 +3,9 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useLocation, useNavigate } from "react-router-dom";
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
 function VerifyEmail() {
   const [verificationCode, setVerificationCode] = useState("");
   const [message, setMessage] = useState("");
@@ -19,7 +22,7 @@ function VerifyEmail() {
   const handleVerification = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/verify-email", {
+      const response = await axios.post("${API_URL}/verify-email", {
         email,
         verificationCode,
       });

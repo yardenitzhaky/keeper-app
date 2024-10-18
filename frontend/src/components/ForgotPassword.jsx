@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -10,7 +13,7 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/forgot-password",
+        "${API_URL}/forgot-password",
         { email },
         { withCredentials: true }
       );

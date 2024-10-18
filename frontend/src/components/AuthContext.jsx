@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
 
 export const AuthContext = createContext();
 
@@ -12,7 +14,7 @@ export function AuthProvider({ children }) {
   const login = async (identifier, password, rememberMe) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/login",
+        "${API_URL}/login",
         { identifier, password, rememberMe },
         { withCredentials: true }
       );
@@ -27,7 +29,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:3000/logout",
+        "${API_URL}/logout",
         {},
         { withCredentials: true }
       );
@@ -39,7 +41,7 @@ export function AuthProvider({ children }) {
 
   const handleGoogleAuthSuccess = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/me", { withCredentials: true });
+      const response = await axios.get("${API_URL}/me", { withCredentials: true });
       setUser(response.data.user);
     } catch (error) {
       console.error("Error fetching user after Google auth:", error);
@@ -50,7 +52,7 @@ export function AuthProvider({ children }) {
     console.log("Checking authentication status...");  // Add this log to check if useEffect runs
   
     axios
-      .get("http://localhost:3000/me", { withCredentials: true })  // Add withCredentials to include session cookies
+      .get("${API_URL}/me", { withCredentials: true })  // Add withCredentials to include session cookies
       .then((response) => {
         console.log("User authenticated:", response.data.user);  // Log the user data
         setUser(response.data.user); // Set the user state

@@ -3,6 +3,9 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
 function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState(""); 
@@ -20,7 +23,7 @@ function Register() {
       return;
     }
     try {
-      await axios.post("http://localhost:3000/register", {
+      await axios.post("${API_URL}/register", {
         username,
         email,
         password,
