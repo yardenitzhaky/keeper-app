@@ -49,7 +49,7 @@ function Login() {
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully", loggedInUser);
-      if (User !== loggedInUser) {
+      if (user !== loggedInUser) {
         setUser(loggedInUser);
       }
       setTimeout(() => {
