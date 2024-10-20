@@ -342,6 +342,7 @@ If you did not request this, please ignore this email and your password will rem
 app.post('/reset-password/:token', async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+  console.log('Received reset password request for token:', token);
 
   try {
     // Find the user with the matching reset token and check if it's not expired
@@ -352,9 +353,11 @@ app.post('/reset-password/:token', async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
+      console.log('No user found with the provided token or token expired');
       return res.status(400).json({ message: 'Invalid or expired password reset token.' });
     }
-
+  
+    console.log('User found, validating new password');
     // Validate the new password (reuse your password validation logic)
     const isStrongPassword = validator.isStrongPassword(password, {
       minLength: 8,
@@ -372,14 +375,17 @@ app.post('/reset-password/:token', async (req, res) => {
     }
 
     // Hash the new password
+    console.log('Hashing new password');
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update the user's password and remove reset token fields
+    console.log('Updating user password and clearing reset token');
     await db.query(
       'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE id = $2',
       [hashedPassword, user.id]
     );
 
+    console.log('Password reset successful');
     res.status(200).json({ message: 'Your password has been updated successfully.' });
   } catch (err) {
     console.error('Reset Password Error:', err);

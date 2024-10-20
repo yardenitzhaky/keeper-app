@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-axios.defaults.withCredentials = true;
 import { useParams, useNavigate } from "react-router-dom";
 
+axios.defaults.withCredentials = true;
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
-
 
 function ResetPassword() {
   const { token } = useParams();
@@ -13,25 +12,16 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-
-    // Clear previous errors
     setErrors({});
-
-    // Validate passwords
-    const validationErrors = {};
+    setIsLoading(true);
 
     if (password !== confirmPassword) {
-      validationErrors.confirmPassword = "Passwords do not match";
-    }
-
-    // Optional: Add client-side password strength validation here
-    // For example, you can use a regex or a library like validator.js
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+      setErrors({ confirmPassword: "Passwords do not match" });
+      setIsLoading(false);
       return;
     }
 
@@ -42,7 +32,6 @@ function ResetPassword() {
         { withCredentials: true }
       );
       setSuccessMessage(response.data.message);
-      // Optionally redirect to login page after a delay
       setTimeout(() => {
         navigate("/login");
       }, 3000);
@@ -50,13 +39,15 @@ function ResetPassword() {
       console.error("Reset Password Error:", error.response?.data || error.message);
       const errorMessage = error.response?.data?.message || "An error occurred. Please try again later.";
       setErrors({ server: errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
       <h2>Reset Password</h2>
-      {successMessage && <p>{successMessage}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
       {!successMessage && (
         <form onSubmit={handleResetPassword}>
           <input
@@ -67,7 +58,6 @@ function ResetPassword() {
             required
           />
           {errors.password && <p className="error">{errors.password}</p>}
-
           <input
             type="password"
             placeholder="Confirm your new password"
@@ -76,10 +66,10 @@ function ResetPassword() {
             required
           />
           {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
-
           {errors.server && <p className="error">{errors.server}</p>}
-
-          <button type="submit">Reset Password</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Resetting..." : "Reset Password"}
+          </button>
         </form>
       )}
     </div>
