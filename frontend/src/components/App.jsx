@@ -13,6 +13,7 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 import { AuthContext } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
@@ -22,11 +23,11 @@ function App() {
 
   const [notes, setNotes] = useState([]);
   const [editNote, setEditNote] = useState(null);
-  const { user, setUser, loading, checkAuthStatus } = useContext(AuthContext);
+  const { user, loading, checkAuthStatus } = useContext(AuthContext);
 
   useEffect(() => {
     checkAuthStatus();
-  }, []);
+  }, [checkAuthStatus]);
   
   useEffect(() => {
     if (user) {
@@ -100,37 +101,36 @@ function App() {
   }
 
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <CreateArea onAdd={addNote} editNote={editNote} onUpdate={updateNote} />
-              {notes.map((noteItem) => (
-                <Note
-                  key={noteItem.id}
-                  id={noteItem.id}
-                  title={noteItem.title}
-                  content={noteItem.content}
-                  onDelete={deleteNote}
-                  onEdit={handleEditClick}
-                />
-              ))}
-            </>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-      </Routes>
-      <Footer />
-    </Router>
+      <Router>
+        <Header />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <CreateArea onAdd={addNote} editNote={editNote} onUpdate={updateNote} />
+                {notes.map((noteItem) => (
+                  <Note
+                    key={noteItem.id}
+                    id={noteItem.id}
+                    title={noteItem.title}
+                    content={noteItem.content}
+                    onDelete={deleteNote}
+                    onEdit={handleEditClick}
+                  />
+                ))}
+              </PrivateRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+        </Routes>
+        <Footer />
+      </Router>
   );
-
 
 }
 
