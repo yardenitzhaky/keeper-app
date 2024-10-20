@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
 
   const login = async (identifier, password, rememberMe) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe });
+      const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
       const user = response.data.user;
       setUser(user);
       console.log("User set in AuthContext:", user);
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await axios.post(`${API_URL}/logout`);
+      await axios.post(`${API_URL}/logout`, {withCredentials: true,} );
       setUser(null);
     } catch (error) {
       console.error("Logout failed:", error.response?.data || error.message);
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
 
   const handleGoogleAuthSuccess = async () => {
     try {
-      const response = await axios.get(`${API_URL}/me`);
+      const response = await axios.get(`${API_URL}/me`, {withCredentials: true,} );
       setUser(response.data.user);
       return response.data.user;
     } catch (error) {

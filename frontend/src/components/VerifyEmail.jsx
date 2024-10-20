@@ -25,6 +25,7 @@ function VerifyEmail() {
       const response = await axios.post(`${API_URL}/verify-email`, {
         email,
         verificationCode,
+        withCredentials: true,
       });
       setMessage(response.data.message);
       // Optionally redirect to login page after verification
