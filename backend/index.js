@@ -44,14 +44,21 @@ const allowedOrigins = [
   // Add any other origins you need, including local development URLs
 ];
 
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'https://keeper-frontend-36zj.onrender.com',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -69,7 +76,7 @@ app.use(
       httpOnly: true,
       sameSite: 'None', // Allows cross-origin cookies
       secure: false,   // Set to true if using HTTPS
-      domain: '.onrender.com'
+      domain: '.keeper-backend-kgj9.onrender.com'
     },
     store: new PgSession({
       pool: db,
