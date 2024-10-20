@@ -69,13 +69,34 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
     console.log("Login form submitted for user:", identifier);
+    
+    // Create a form data object
+    const formData = new FormData();
+    formData.append('identifier', identifier);
+    formData.append('password', password);
+    formData.append('rememberMe', rememberMe);
+
+    // Use the Fetch API to submit the form
+    fetch(`${API_URL}/login`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include' // This is important for cookies
+    }).then(response => {
+      if (response.redirected) {
+        window.location.href = response.url;
+      } else {
+        return response.text();
+      }
+    }).then(data => {
+      console.log("Server response:", data);
+      // Handle non-redirect responses here
+    }).catch(error => {
+      console.error("Login error:", error);
+      setErrors({ server: "An error occurred during login" });
+    });
   };
+
 
   const validateForm = () => {
     const errors = {};
@@ -104,7 +125,7 @@ const handleGoogleSignIn = (e) => {
     <div className="auth-container">
       <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} action="/login" method="POST">
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           id="identifier"
