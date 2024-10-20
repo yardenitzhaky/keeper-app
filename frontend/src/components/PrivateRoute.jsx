@@ -17,8 +17,6 @@ function PrivateRoute({ children }) {
     return <div>Loading...</div>;
   }
 
-  console.log("PrivateRoute - User:", user);
-
   console.log("PrivateRoute - Rendering children");
 
   return user ? children : <Navigate to="/login" />;

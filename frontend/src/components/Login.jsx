@@ -49,9 +49,7 @@ function Login() {
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully", loggedInUser);
-      setTimeout(() => {
-        navigate("/");
-      }, 100);
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       // Inside the catch block

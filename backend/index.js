@@ -383,34 +383,34 @@ app.post('/login', (req, res, next) => {
       return res.status(400).json({ message: info.message || 'Login failed' });
     }
     
-    req.logIn(user, async (err) => {  // Make this async to handle session saving later
-      if (err) {
-        console.error("Login error:", err);
-        return res.status(500).json({ message: 'Login failed', error: err });
+    req.login(user, (loginErr) => {
+      if (loginErr) {
+        console.error("Login error:", loginErr);
+        return res.status(500).json({ message: 'Login failed', error: loginErr });
       }
       
       // Adjust session expiration based on "remember me"
       if (rememberMe) {
         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
       } else {
-        req.session.cookie.expires = null; // Session ends when the browser is closed
+        req.session.cookie.expires = false; // Session ends when the browser is closed
       }
       
       console.log("User logged in successfully:", user.username);
       console.log("Session ID:", req.sessionID);
       console.log("Session:", JSON.stringify(req.session, null, 2));
       
-      // Save the session explicitly and respond to the client
-      try {
-        await req.session.save(); // Use async/await here
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error("Session save error:", saveErr);
+          return res.status(500).json({ message: 'Session save failed', error: saveErr });
+        }
+        
         return res.status(200).json({
           message: 'Logged in successfully',
           user: { id: user.id, username: user.username, email: user.email }
         });
-      } catch (err) {
-        console.error("Session save error:", err);
-        return res.status(500).json({ message: 'Session save failed', error: err });
-      }
+      });
     });
   })(req, res, next);
 });

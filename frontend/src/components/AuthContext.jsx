@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
       const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
       const user = response.data.user;
       console.log("User set in AuthContext:", user);
+      setUser(user);
       return user;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
