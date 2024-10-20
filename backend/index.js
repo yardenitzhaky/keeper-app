@@ -37,6 +37,8 @@ db.connect()
 app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_SECRET)); // Use a secret for signed cookies
+
 
 const allowedOrigins = [
   'https://keeper-frontend-36zj.onrender.com',
@@ -427,7 +429,11 @@ app.post('/login', (req, res, next) => {
               console.error("Session save error:", err);
               return res.status(500).send('Session save failed');
             }
-            return res.redirect('/');
+            return res.status(200).json({ 
+              message: 'Logged in successfully', 
+              user: { id: user.id, username: user.username, email: user.email },
+              redirect: '/'
+            });
           });
         });
       });

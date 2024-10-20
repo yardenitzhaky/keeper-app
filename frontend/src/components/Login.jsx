@@ -67,34 +67,31 @@ function Login() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Login form submitted for user:", identifier);
     
-    // Create a form data object
-    const formData = new FormData();
-    formData.append('identifier', identifier);
-    formData.append('password', password);
-    formData.append('rememberMe', rememberMe);
+    try {
+      const response = await axios.post(`${API_URL}/login`, {
+        identifier,
+        password,
+        rememberMe
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
-    // Use the Fetch API to submit the form
-    fetch(`${API_URL}/login`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include' // This is important for cookies
-    }).then(response => {
-      if (response.redirected) {
-        window.location.href = response.url;
-      } else {
-        return response.text();
+      console.log("Login response:", response.data);
+      
+      if (response.data.redirect) {
+        window.location.href = response.data.redirect;
       }
-    }).then(data => {
-      console.log("Server response:", data);
-      // Handle non-redirect responses here
-    }).catch(error => {
-      console.error("Login error:", error);
-      setErrors({ server: "An error occurred during login" });
-    });
+    } catch (error) {
+      console.error("Login error:", error.response?.data || error.message);
+      setErrors({ server: error.response?.data?.message || "An error occurred during login" });
+    }
   };
 
 
