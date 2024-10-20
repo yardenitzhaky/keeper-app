@@ -55,7 +55,14 @@ app.use(cors({
   "Access-Control-Allow-Credentials": true
 }));
 
+
+
 const PgSession = pgSession(session);
+
+app.set('trust proxy', 1); // trust first proxy
+
+
+
 
 app.use(
   session({
@@ -70,9 +77,10 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
-    }
+    },
+    name: 'keeper.sid',
   })
 );
 
