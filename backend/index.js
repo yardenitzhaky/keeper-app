@@ -585,12 +585,14 @@ app.delete("/notes/:id", async (req, res) => {
 app.put("/notes/:id", async (req, res) => {
   const noteId = req.params.id;
   const { title, content } = req.body;
+  console.log("Updating note with ID:", noteId);
 
   try {
     const result = await db.query(
       "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *;",
       [title, content, noteId]
     );
+    console.log("Note updated:", result.rows[0]);
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Database error", err);

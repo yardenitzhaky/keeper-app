@@ -83,6 +83,7 @@ function App() {
   }
 
   async function updateNote(updatedNote) {
+    console.log("Updating note:", updatedNote);
     try {
       const response = await axios.put(`${API_URL}/notes/${updatedNote.id}`,{withCredentials: true}, updatedNote,);
       setNotes(prevNotes =>
