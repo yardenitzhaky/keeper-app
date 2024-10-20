@@ -13,6 +13,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import exp from "constants";
+import cookieParser from 'cookie-parser';
 
 const app = express();
 

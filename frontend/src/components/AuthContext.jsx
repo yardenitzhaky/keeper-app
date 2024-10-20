@@ -12,7 +12,15 @@ export function AuthProvider({ children }) {
 
   const login = async (identifier, password, rememberMe) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
+      const response = await axios.post(`${API_URL}/login`, 
+      { identifier, password, rememberMe },
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
       const user = response.data.user;
       console.log("User set in AuthContext:", user);
       setUser(user);
@@ -22,6 +30,8 @@ export function AuthProvider({ children }) {
       throw error;
     }
   };
+
+
 
 
 
