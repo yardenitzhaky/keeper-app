@@ -69,7 +69,7 @@ app.use(
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
-      httpOnly: false,
+      httpOnly: true,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
     }
