@@ -68,6 +68,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', req.headers.origin); // Don't use '*'
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 
 
 
@@ -91,7 +98,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: None,
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
