@@ -13,7 +13,7 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "${API_URL}/forgot-password",
+        `${API_URL}/forgot-password`,
         { email },
         { withCredentials: true }
       );
