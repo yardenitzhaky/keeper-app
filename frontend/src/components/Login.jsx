@@ -50,7 +50,6 @@ function Login() {
       const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully");
       setUser(loggedInUser);
-      await checkAuthStatus(); // Add this line
       setTimeout(() => {
         navigate("/");
       }, 100);
