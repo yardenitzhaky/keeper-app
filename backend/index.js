@@ -68,7 +68,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: false,
+      secure: isProduction,
       httpOnly: false,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
@@ -418,9 +418,6 @@ app.post('/login', (req, res, next) => {
     });
   })(req, res, next);
 });
-
-
-
 
   app.post('/logout', (req, res) => {
     req.logout(err => {
