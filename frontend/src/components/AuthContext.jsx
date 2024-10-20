@@ -77,41 +77,26 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // const checkAuthStatus = async () => {
-  //   try {
-  //     console.log("Checking auth status...");
-  //     const response = await axios.get(`${API_URL}/check-session`, { withCredentials: true });
-  //     console.log("Auth status check response:", response.data);
-  //     if (response.data.isAuthenticated && response.data.user) {
-  //       console.log("Setting user:", response.data.user);
-  //       setUser(response.data.user);
-  //     } else {
-  //       console.log("No authenticated user found");
-  //       setUser(null);
-  //     }
-  //   } catch (error) {
-  //     console.log("Error checking auth status:", error.response?.data || error.message);
-  //     setUser(null);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/user`, { withCredentials: true });
-      if (response.data.isAuthenticated) {
+      console.log("Checking auth status...");
+      const response = await axios.get(`${API_URL}/check-session`, { withCredentials: true });
+      console.log("Auth status check response:", response.data);
+      if (response.data.isAuthenticated && response.data.user) {
+        console.log("Setting user:", response.data.user);
         setUser(response.data.user);
       } else {
+        console.log("No authenticated user found");
         setUser(null);
       }
     } catch (error) {
-      console.error("Error checking auth status:", error);
+      console.log("Error checking auth status:", error.response?.data || error.message);
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, login, logout, handleGoogleAuthSuccess, checkAuthStatus }}>
