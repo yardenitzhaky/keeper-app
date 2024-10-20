@@ -30,11 +30,21 @@ const db = new pg.Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
+// Test the database connection
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Error connecting to the database', err);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
+
 db.connect()
   .then(() => console.log('Connected to the database'))
   .catch(err => console.error('Error connecting to the database:', err));
 
-app.set('trust proxy', 1);
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -46,30 +56,30 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: 'https://keeper-frontend-36zj.onrender.com',
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['*']
 }));
 
 const PgSession = pgSession(session);
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: 'None', // Allows cross-origin cookies
-      secure: false,   // Set to true if using HTTPS
-      domain: '.keeper-frontend-36zj.onrender.com'
-    },
     store: new PgSession({
       pool: db,
       tableName: 'session',
     }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure: false,
+      httpOnly: false,
+      sameSite: 'none',
+      domain: '.onrender.com'
+    }
   })
 );
 
