@@ -379,7 +379,7 @@ app.post('/login', (req, res, next) => {
   const { identifier, password, rememberMe } = req.body;
   
     if (!identifier || !password) {
-      console.log("Missing credentials");
+      console.log("Missing credentials", req.body);
       return res.status(400).json({ message: 'Missing credentials' });
     }
     
@@ -421,20 +421,14 @@ app.post('/login', (req, res, next) => {
           if (req.isAuthenticated()) {
             console.log("User is authenticated after login");
           }
-          
-          // Return user info without sensitive data
-          const safeUser = {
-            id: user.id,
-            username: user.username,
-            email: user.email
-          };
-          console.log("Safe user:", safeUser);
-          // return res.status(200).json({ 
-          //   message: 'Logged in successfully', 
-          //   user: safeUser,
-          //   sessionID: req.sessionID
-          // });
-          req.session.save(() => res.redirect('/'));
+      
+          req.session.save((err) => {
+            if (err) {
+              console.error("Session save error:", err);
+              return res.status(500).send('Session save failed');
+            }
+            return res.redirect('/');
+          });
         });
       });
     })(req, res, next);

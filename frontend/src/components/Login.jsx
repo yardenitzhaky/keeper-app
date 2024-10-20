@@ -67,6 +67,16 @@ function Login() {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    console.log("Login form submitted for user:", identifier);
+  };
+
   const validateForm = () => {
     const errors = {};
 
@@ -94,7 +104,7 @@ const handleGoogleSignIn = (e) => {
     <div className="auth-container">
       <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           id="identifier"
