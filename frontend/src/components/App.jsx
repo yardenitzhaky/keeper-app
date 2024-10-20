@@ -26,7 +26,7 @@ function App() {
 
   useEffect(() => {
     checkAuthStatus();
-  }, [checkAuthStatus]);
+  }, []);
   
   useEffect(() => {
     if (user) {
