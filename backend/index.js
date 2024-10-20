@@ -105,7 +105,7 @@ app.use(
       secure: isProduction,
       httpOnly: true,
       sameSite: 'None',
-      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
+      domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
   })
