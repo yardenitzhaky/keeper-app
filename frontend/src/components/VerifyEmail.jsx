@@ -3,7 +3,7 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useLocation, useNavigate } from "react-router-dom";
 
-const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = process.env.NODE_ENV !== 'production' ? 'http://localhost:10000' : 'https://keeper-backend-kgj9.onrender.com';
 
 
 function VerifyEmail() {

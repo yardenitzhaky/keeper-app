@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = process.env.NODE_ENV !== 'production' ? 'http://localhost:10000' : 'https://keeper-backend-kgj9.onrender.com';
 
 
 function ForgotPassword() {

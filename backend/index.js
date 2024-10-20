@@ -20,14 +20,14 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 
 const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
 const db = new pg.Pool({
   connectionString: connectionString,
-  ssl: isProduction ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 
@@ -42,6 +42,7 @@ app.use(express.json());
 const allowedOrigins = [
   'https://keeper-frontend-36zj.onrender.com',
   'https://keeper-backend-kgj9.onrender.com',
+  'http://localhost:5173',
   'https://localhost:5173'
   // Add any other origins you need, including local development URLs
 ];
@@ -68,7 +69,7 @@ app.use(
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: false,
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'lax',
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
     }
@@ -491,7 +492,7 @@ app.get('/auth/google/callback',
         return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
       }
       req.session.save(() => {
-        res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
+        res.redirect(isProduction ? 'https://keeper-frontend-36zj.onrender.com' : 'http://localhost:5173');
       })
     });
   }
