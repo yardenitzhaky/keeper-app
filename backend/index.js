@@ -12,6 +12,7 @@ import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import exp from "constants";
 
 
