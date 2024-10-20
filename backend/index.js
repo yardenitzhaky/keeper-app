@@ -104,7 +104,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
       httpOnly: true,
-      sameSite: 'None',
+      sameSite: 'none',
       domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
