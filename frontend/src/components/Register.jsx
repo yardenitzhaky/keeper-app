@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
-import CustomLoadingButton from "./CustomLoadingButton";
+import LoadingButton from "./CustomLoadingButton";
 
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
