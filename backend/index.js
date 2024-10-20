@@ -418,7 +418,11 @@ app.post('/login', (req, res, next) => {
               console.error("Session save error:", err);
               return res.status(500).send('Session save failed');
             }
-            return res.redirect('/');
+            return res.status(200).json({ 
+              message: 'Logged in successfully', 
+              user: safeUser,
+              sessionID: req.sessionID
+            });
           });
         });
       });
