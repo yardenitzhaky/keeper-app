@@ -37,7 +37,6 @@ db.connect()
   .catch(err => console.error('Error connecting to the database:', err));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 const allowedOrigins = [
@@ -76,6 +75,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.use((req, res, next) => {
   console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
@@ -427,12 +428,13 @@ app.post('/login', (req, res, next) => {
       if (err) {
         return res.status(500).json({ message: 'Login error', error: err });
       }
-      // Redirect to establish the session
+      // Redirect to home page
       res.redirect('/');
     });
   })(req, res, next);
 });
 
+// Add a route to get user info
 app.get('/api/user', (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ isAuthenticated: true, user: req.user });
