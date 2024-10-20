@@ -24,9 +24,9 @@ function App() {
   const [editNote, setEditNote] = useState(null);
   const { user, setUser, loading, checkAuthStatus } = useContext(AuthContext);
 
-  // useEffect(() => {
-  //   checkAuthStatus();
-  // }, []);
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
   
   useEffect(() => {
     if (user) {
