@@ -65,25 +65,6 @@ const allowedOrigins = [
   // Add any other origins you need, including local development URLs
 ];
 
-// app.use(cors({
-//   origin: allowedOrigins,
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-//   "Access-Control-Allow-Credentials": true
-// }));
-
-
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   res.header('Access-Control-Allow-Origin', req.headers.origin); // Don't use '*'
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//   next();
-// });
-
-
-
-
 const PgSession = pgSession(session);
 
 app.set('trust proxy', 1); // trust first proxy
@@ -311,6 +292,8 @@ Your App Team`,
 
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
+  console.log('Received forgot password request for email:', email);
+
 
   try {
     // Check if the user exists
@@ -318,9 +301,11 @@ app.post('/forgot-password', async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
+      console.log('No user found with email:', email);
       // For security, we return the same response whether the email exists or not
       return res.status(200).json({ message: 'If that email is registered, a reset link has been sent.' });
     }
+    console.log('User found, generating reset token');
 
     // Generate a reset token
     const token = crypto.randomBytes(32).toString('hex');
