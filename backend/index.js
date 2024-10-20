@@ -429,11 +429,12 @@ app.post('/login', (req, res, next) => {
             email: user.email
           };
           console.log("Safe user:", safeUser);
-          return res.status(200).json({ 
-            message: 'Logged in successfully', 
-            user: safeUser,
-            sessionID: req.sessionID
-          });
+          // return res.status(200).json({ 
+          //   message: 'Logged in successfully', 
+          //   user: safeUser,
+          //   sessionID: req.sessionID
+          // });
+          req.session.save(() => res.redirect('/'));
         });
       });
     })(req, res, next);
@@ -508,7 +509,9 @@ app.get('/auth/google/callback',
         console.error("Error logging in the user after Google authentication:", err);
         return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
       }
-      res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
+      req.session.save(() => {
+        res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
+      })
     });
   }
 );
