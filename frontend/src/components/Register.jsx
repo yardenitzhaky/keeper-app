@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
+import CustomLoadingButton from "./CustomLoadingButton";
+
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -12,6 +14,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -22,6 +26,7 @@ function Register() {
       setErrors(validationErrors);
       return;
     }
+    setIsLoading(true);
     try {
       await axios.post(`${API_URL}/register`, {
         username,
@@ -33,6 +38,8 @@ function Register() {
       console.error("Registration failed:", error.response?.data || error.message);
       // Handle server-side errors
       setErrors({ server: error.response?.data || "Registration failed" });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,7 +99,7 @@ function Register() {
         {errors.username && <p className="error">{errors.username}</p>}
 
         <input
-          type="text"
+          type="email"
           id="email"
           name="email"
           placeholder="Email"
@@ -124,10 +131,17 @@ function Register() {
         />
         {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
 
-        {/* Server Error */}
         {errors.server && <p className="error">{errors.server}</p>}
 
-        <button type="submit">Register</button>
+        <LoadingButton
+          type="submit"
+          loading={isLoading}
+          fullWidth
+          variant="contained"
+          color="primary"
+        >
+          Register
+        </LoadingButton>
       </form>
       <p>
         Already have an account? <Link to="/Login">Login here</Link>

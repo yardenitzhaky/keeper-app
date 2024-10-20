@@ -6,11 +6,14 @@ import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+import LoadingButton from "./LoadingButton";
+
 
 
 function CreateArea(props) {
 
   const [isExpanded, setExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [note, setNote] = useState({
     title: "",
@@ -40,33 +43,29 @@ function CreateArea(props) {
 
   async function submitNote(event) {
     event.preventDefault();
-    if (props.editNote) {
-      // Update existing note
-      props.onUpdate({
-        id: props.editNote.id,
-        title: note.title,
-        content: note.content,
-      });
-      // Clear the note and collapse the form
+    setIsLoading(true);
+    try {
+      if (props.editNote) {
+        await props.onUpdate({
+          id: props.editNote.id,
+          title: note.title,
+          content: note.content,
+        });
+      } else {
+        await props.onAdd(note);
+      }
       setNote({
         title: "",
         content: ""
       });
       setExpanded(false);
-    } else {
-      // Create new note
-      props.onAdd(note);
-      // Clear the note and collapse the form
-      setNote({
-        title: "",
-        content: ""
-      });
-      setExpanded(false);
+    } catch (error) {
+      console.error("Error submitting note:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
-  
-  
-  
+
 
   function expand() {
     setExpanded(true);
@@ -76,12 +75,14 @@ function CreateArea(props) {
   return (
     <div>
       <form className="create-note">
-        {isExpanded ? <input
-          name="title"
-          onChange={handleChange}
-          value={note.title}
-          placeholder="Title"
-        /> : null}
+        {isExpanded && (
+          <input
+            name="title"
+            onChange={handleChange}
+            value={note.title}
+            placeholder="Title"
+          />
+        )}
         <textarea
           onClick={expand}
           name="content"
@@ -91,9 +92,26 @@ function CreateArea(props) {
           rows={isExpanded ? 3 : 1}
         />
         <Zoom in={isExpanded}>
-        <Fab onClick={submitNote}>
-        {props.editNote ? <DoneIcon /> : <AddIcon />}
-        </Fab>
+          <LoadingButton
+            onClick={submitNote}
+            loading={isLoading}
+            sx={{
+              position: 'absolute',
+              right: '18px',
+              bottom: '-18px',
+              backgroundColor: '#f5ba13',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
+              width: '36px',
+              height: '36px',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+              cursor: 'pointer',
+              outline: 'none',
+            }}
+          >
+            {props.editNote ? <DoneIcon /> : <AddIcon />}
+          </LoadingButton>
         </Zoom>
       </form>
     </div>
