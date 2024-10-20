@@ -10,52 +10,20 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // const login = async (identifier, password, rememberMe) => {
-  //   try {
-  //     const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
-  //     const user = response.data.user;
-  //     console.log("User set in AuthContext:", user);
-  //     setUser(user);
-  //     return user;
-  //   } catch (error) {
-  //     console.error("Login failed:", error.response?.data || error.message);
-  //     throw error;
-  //   }
-  // };
-
   const login = async (identifier, password, rememberMe) => {
     try {
-      // Instead of using axios, we'll use fetch for this request
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ identifier, password, rememberMe }),
-        credentials: 'include',
-        redirect: 'manual' // This is key: it allows us to handle redirects manually
-      });
-  
-      if (response.type === 'opaqueredirect') {
-        // This means a redirect happened, which is what we want
-        console.log("Redirect detected, fetching user data");
-        // Now fetch the user data
-        const userResponse = await axios.get(`${API_URL}/api/user`, { withCredentials: true });
-        if (userResponse.data.isAuthenticated) {
-          setUser(userResponse.data.user);
-          return userResponse.data.user;
-        } else {
-          throw new Error('Authentication failed after redirect');
-        }
-      } else {
-        // If we don't get a redirect, something went wrong
-        throw new Error('Login failed: No redirect occurred');
-      }
+      const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
+      const user = response.data.user;
+      console.log("User set in AuthContext:", user);
+      setUser(user);
+      return user;
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Login failed:", error.response?.data || error.message);
       throw error;
     }
   };
+
+
 
   const logout = async () => {
     try {
