@@ -30,14 +30,6 @@ const db = new pg.Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
-// Test the database connection
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('Error connecting to the database', err);
-  } else {
-    console.log('Connected to the database');
-  }
-});
 
 
 db.connect()
