@@ -39,7 +39,7 @@ function ForgotPassword() {
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleForgotPassword}>
         <input
-          type="email"  // Changed to email type for better validation
+          type="text"  // Changed to email type for better validation
           placeholder="Enter your registered email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
