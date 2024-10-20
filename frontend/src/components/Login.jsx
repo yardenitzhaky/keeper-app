@@ -67,33 +67,6 @@ function Login() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Login form submitted for user:", identifier);
-    
-    try {
-      const response = await axios.post(`${API_URL}/login`, {
-        identifier,
-        password,
-        rememberMe
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log("Login response:", response.data);
-      
-      if (response.data.redirect) {
-        window.location.href = response.data.redirect;
-      }
-    } catch (error) {
-      console.error("Login error:", error.response?.data || error.message);
-      setErrors({ server: error.response?.data?.message || "An error occurred during login" });
-    }
-  };
-
 
   const validateForm = () => {
     const errors = {};
@@ -122,7 +95,7 @@ const handleGoogleSignIn = (e) => {
     <div className="auth-container">
       <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleLogin}>
         <input
           type="text"
           id="identifier"
