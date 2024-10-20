@@ -66,6 +66,9 @@ function CreateArea(props) {
     }
   }
 
+  
+  
+  
 
   function expand() {
     setExpanded(true);
@@ -75,14 +78,12 @@ function CreateArea(props) {
   return (
     <div>
       <form className="create-note">
-        {isExpanded && (
-          <input
-            name="title"
-            onChange={handleChange}
-            value={note.title}
-            placeholder="Title"
-          />
-        )}
+        {isExpanded ? <input
+          name="title"
+          onChange={handleChange}
+          value={note.title}
+          placeholder="Title"
+        /> : null}
         <textarea
           onClick={expand}
           name="content"
@@ -92,26 +93,9 @@ function CreateArea(props) {
           rows={isExpanded ? 3 : 1}
         />
         <Zoom in={isExpanded}>
-          <LoadingButton
-            onClick={submitNote}
-            loading={isLoading}
-            sx={{
-              position: 'absolute',
-              right: '18px',
-              bottom: '-18px',
-              backgroundColor: '#f5ba13',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '50%',
-              width: '36px',
-              height: '36px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-              cursor: 'pointer',
-              outline: 'none',
-            }}
-          >
-            {props.editNote ? <DoneIcon /> : <AddIcon />}
-          </LoadingButton>
+        <Fab onClick={submitNote}>
+        {props.editNote ? <DoneIcon /> : <AddIcon />}
+        </Fab>
         </Zoom>
       </form>
     </div>
