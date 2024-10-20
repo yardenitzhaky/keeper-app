@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
-const API_URL = process.env.NODE_ENV !== 'production' ? 'http://localhost:10000' : 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
 
 function PrivateRoute({ children }) {

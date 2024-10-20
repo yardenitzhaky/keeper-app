@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = process.env.NODE_ENV !== 'production' ? 'http://localhost:10000' : 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 axios.defaults.withCredentials = true;
 
 export const AuthContext = createContext();
