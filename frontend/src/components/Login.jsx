@@ -49,7 +49,6 @@ function Login() {
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
       console.log("User logged in successfully", loggedInUser);
-      setUser(loggedInUser);
       setTimeout(() => {
         navigate("/");
       }, 100);

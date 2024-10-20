@@ -14,7 +14,6 @@ export function AuthProvider({ children }) {
     try {
       const response = await axios.post(`${API_URL}/login`, { identifier, password, rememberMe }, {withCredentials: true,} );
       const user = response.data.user;
-      //setUser(user);
       console.log("User set in AuthContext:", user);
       return user;
     } catch (error) {
@@ -34,7 +33,7 @@ export function AuthProvider({ children }) {
 
   const handleGoogleAuthSuccess = async () => {
     try {
-      const response = await axios.get(`${API_URL}/me`, {withCredentials: true,} );
+      const response = await axios.get(`${API_URL}/me`, user, {withCredentials: true,} );
       setUser(response.data.user);
       return response.data.user;
     } catch (error) {

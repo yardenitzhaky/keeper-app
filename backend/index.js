@@ -63,14 +63,13 @@ app.use(
       tableName: 'session',
     }),
     secret: process.env.SESSION_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: false,
-      httpOnly: false,
-      sameSite: 'none',
-      domain: '.onrender.com'
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax'
     }
   })
 );
@@ -79,7 +78,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
-  console.log('Session ID:', req.sessionID);
+  console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
   console.log('Session:', JSON.stringify(req.session, null, 2));
   console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
   console.log('Is Authenticated:', req.isAuthenticated());
@@ -363,68 +362,6 @@ app.post('/reset-password/:token', async (req, res) => {
     res.status(500).json({ message: 'An error occurred. Please try again later.' });
   }
 });
-
-// app.post('/login', (req, res, next) => {
-//   console.log("Login request received for user:", req.body.identifier);
-//   const { identifier, password, rememberMe } = req.body;
-  
-//     if (!identifier || !password) {
-//       console.log("Missing credentials", req.body);
-//       return res.status(400).json({ message: 'Missing credentials' });
-//     }
-    
-//     passport.authenticate('local', (err, user, info) => {
-//       if (err) {
-//         console.error("Authentication error:", err);
-//         return res.status(500).json({ message: 'Server error', error: err });
-//       }
-      
-//       if (!user) {
-//         console.log("Authentication failed:", info.message);
-//         return res.status(400).json({ message: info.message || 'Login failed' });
-//       }
-      
-//       req.logIn(user, (err) => {
-//         if (err) {
-//           console.error("Login error:", err);
-//           return res.status(500).json({ message: 'Login failed', error: err });
-//         }
-        
-//         // Adjust session expiration based on "remember me"
-//         if (rememberMe) {
-//           req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-//         } else {
-//           req.session.cookie.expires = null; // Session ends when the browser is closed
-//         }
-        
-//         console.log("User logged in successfully:", user.username);
-//         console.log("Session ID:", req.sessionID);
-//         console.log("Session:", JSON.stringify(req.session, null, 2));
-        
-//         // Save the session explicitly
-//         req.session.save((err) => {
-//           if (err) {
-//             console.error("Session save error:", err);
-//             return res.status(500).json({ message: 'Session save failed', error: err });
-//           }
-
-//           if (req.isAuthenticated()) {
-//             console.log("User is authenticated after login");
-//           }
-      
-//           if (err) {
-//             console.error("Session save error:", err);
-//             return res.status(500).send('Session save failed');
-//           }
-//           return res.status(200).json({ 
-//             message: 'Logged in successfully', 
-//             user: { id: user.id, username: user.username, email: user.email },
-//             sessionID: req.sessionID
-//           });
-//         });
-//       });
-//     })(req, res, next);
-//   });
 
 app.post('/login', (req, res, next) => {
   console.log("Login request received for user:", req.body.identifier);
