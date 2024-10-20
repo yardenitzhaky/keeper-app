@@ -587,11 +587,18 @@ app.put("/notes/:id", async (req, res) => {
   const { title, content } = req.body;
   console.log("Updating note with ID:", noteId);
 
+  if (!title || !content) {
+    console.log("Title and content are required", title, content);
+    return res.status(400).json({ message: "Title and content are required" });
+  }
   try {
     const result = await db.query(
-      "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *;",
-      [title, content, noteId]
+      "UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND user_id = $4 RETURNING *;",
+      [title, content, noteId, req.user.id]
     );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Note not found or you don't have permission to update it" });
+    }
     console.log("Note updated:", result.rows[0]);
     res.status(200).json(result.rows[0]);
   } catch (err) {
