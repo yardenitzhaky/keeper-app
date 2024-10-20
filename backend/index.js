@@ -12,7 +12,6 @@ import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
 import exp from "constants";
 
 
@@ -38,8 +37,6 @@ db.connect()
 app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cookieParser(process.env.COOKIE_SECRET)); // Use a secret for signed cookies
-
 
 const allowedOrigins = [
   'https://keeper-frontend-36zj.onrender.com',
