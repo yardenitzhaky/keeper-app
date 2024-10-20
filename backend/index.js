@@ -86,7 +86,7 @@ app.use(
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
       httpOnly: true,
-      sameSite: None,
+      sameSite: 'None',
       domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
