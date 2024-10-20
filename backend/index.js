@@ -14,12 +14,29 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import exp from "constants";
 
+const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: 'https://keeper-frontend-36zj.onrender.com', // Replace with your frontend URL
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
+// Set custom headers for all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('Loading development environment');
   dotenv.config();
 }
-const app = express();
 const port = process.env.PORT || 10000;
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -47,21 +64,21 @@ const allowedOrigins = [
   // Add any other origins you need, including local development URLs
 ];
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  "Access-Control-Allow-Credentials": true
-}));
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+//   "Access-Control-Allow-Credentials": true
+// }));
 
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', req.headers.origin); // Don't use '*'
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   res.header('Access-Control-Allow-Origin', req.headers.origin); // Don't use '*'
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//   next();
+// });
 
 
 
