@@ -417,7 +417,7 @@ app.post('/login', (req, res, next) => {
             }
             return res.status(200).json({ 
               message: 'Logged in successfully', 
-              user: safeUser,
+              user: { id: user.id, username: user.username, email: user.email },
               sessionID: req.sessionID
             });
           });
