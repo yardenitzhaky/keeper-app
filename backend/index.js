@@ -525,6 +525,7 @@ app.get("/", async (req, res) => {
 
 app.get('/notes', async (req, res) => {
   if (!req.isAuthenticated() || !req.user) {
+    console.log("details", req.isAuthenticated(), req.user);
     return res.status(401).json({ message: 'Not authenticated' });
   }
 

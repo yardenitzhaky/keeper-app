@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
@@ -8,6 +8,8 @@ const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
+  const location = useLocation();
+
 
   console.log("PrivateRoute - User:", user);
   console.log("PrivateRoute - Loading:", loading);
@@ -25,7 +27,7 @@ function PrivateRoute({ children }) {
     console.log("PrivateRoute - Redirecting to login");
 
     // Redirect to login if the user is not authenticated
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
   console.log("PrivateRoute - Rendering children");
 

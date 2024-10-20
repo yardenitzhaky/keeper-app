@@ -24,9 +24,9 @@ function App() {
   const [editNote, setEditNote] = useState(null);
   const { user, setUser, loading, checkAuthStatus } = useContext(AuthContext);
 
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  // useEffect(() => {
+  //   checkAuthStatus();
+  // }, []);
   
   useEffect(() => {
     if (user) {
@@ -35,11 +35,15 @@ function App() {
   }, [user]);
   
   async function fetchNotes() {
+    console.log("Fetching notes. Current user:", user);
     try {
       const response = await axios.get(`${API_URL}/notes`, { withCredentials: true });
+      console.log("Notes fetched successfully:", response.data);
       setNotes(response.data);
     } catch (error) {
-      console.error("Error fetching notes:", error);
+      console.error("Error fetching notes:", error.response?.data || error.message);
+      if (error.response && error.response.status === 401) {
+        console.log("Unauthorized. Clearing user state.");      }
     }
   }
   

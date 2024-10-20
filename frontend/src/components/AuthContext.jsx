@@ -45,11 +45,14 @@ export function AuthProvider({ children }) {
 
   const checkAuthStatus = async () => {
     try {
+      console.log("Checking auth status...");
       const response = await axios.get(`${API_URL}/check-session`, { withCredentials: true });
       console.log("Auth status check response:", response.data);
       if (response.data.isAuthenticated && response.data.user) {
+        console.log("Setting user:", response.data.user);
         setUser(response.data.user);
       } else {
+        console.log("No authenticated user found");
         setUser(null);
       }
     } catch (error) {
