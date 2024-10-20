@@ -48,7 +48,7 @@ function Login() {
     console.log("Login attempt started for user:", identifier, "and the remember me status is:", rememberMe);
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
-      console.log("User logged in successfully");
+      console.log("User logged in successfully", loggedInUser);
       setUser(loggedInUser);
       setTimeout(() => {
         navigate("/");
