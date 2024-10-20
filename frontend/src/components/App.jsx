@@ -13,7 +13,6 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 import { AuthContext } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute
-import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
