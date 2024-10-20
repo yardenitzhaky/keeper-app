@@ -3,19 +3,16 @@ import { AuthContext } from "./AuthContext";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import LoadingButton from "./LoadingButton";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
 
-//
+
 function Login() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-
   const location = useLocation();
   const navigate = useNavigate();
   const { login, handleGoogleAuthSuccess, user, setUser, checkAuthStatus } = useContext(AuthContext);
@@ -48,7 +45,6 @@ function Login() {
       setErrors(validationErrors);
       return;
     }
-    setIsLoading(true);
     console.log("Login attempt started for user:", identifier, "and the remember me status is:", rememberMe);
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
@@ -64,8 +60,6 @@ function Login() {
           error.message ||
           'Login failed',
   });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -132,35 +126,19 @@ const handleGoogleSignIn = (e) => {
         </label>
 
         {errors.server && (
-          <p className="error" role="alert">
-            {errors.server}
-          </p>
-        )}
+  <p className="error" role="alert">
+    {errors.server}
+  </p>
+)}
 
-        <LoadingButton
-          type="submit"
-          loading={isLoading}
-          fullWidth
-          variant="contained"
-          color="primary"
-        >
-          Login
-        </LoadingButton>
+
+        <button type="submit">Login</button>
       </form>
-      
-      <LoadingButton
-        onClick={handleGoogleSignIn}
-        loading={isLoading}
-        fullWidth
-        variant="contained"
-        color="secondary"
-        sx={{ mt: 2 }}
-      >
-        <img src="/images/google_logo.png" alt="Google icon" style={{ marginRight: '8px', width: '18px', height: '18px' }} />
-        Sign in with Google
-      </LoadingButton>
-      
-      <p>
+      <button onClick={handleGoogleSignIn} className="social-login-button">
+          <img src="/images/google_logo.png" alt="Google icon" />
+          Sign in with Google
+        </button>
+            <p>
         Don't have an account? <Link to="/Register">Register here</Link>
       </p>
       <p>
@@ -169,6 +147,5 @@ const handleGoogleSignIn = (e) => {
     </div>
   );
 }
-
 
 export default Login;
