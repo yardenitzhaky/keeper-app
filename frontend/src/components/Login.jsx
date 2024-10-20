@@ -104,7 +104,7 @@ const handleGoogleSignIn = (e) => {
     <div className="auth-container">
       <img src="/images/logo.PNG" alt="Logo" className="logo" />
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} action="/login" method="POST">
         <input
           type="text"
           id="identifier"
