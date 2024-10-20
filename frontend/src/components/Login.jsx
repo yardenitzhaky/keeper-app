@@ -156,7 +156,7 @@ const handleGoogleSignIn = (e) => {
         color="secondary"
         sx={{ mt: 2 }}
       >
-        <img src="/images/google_logo.png" alt="Google icon" style={{ marginRight: '8px' }} />
+        <img src="/images/google_logo.png" alt="Google icon" style={{ marginRight: '8px', width: '18px', height: '18px' }} />
         Sign in with Google
       </LoadingButton>
       
