@@ -16,35 +16,25 @@ import exp from "constants";
 
 
 if (process.env.NODE_ENV !== 'production') {
+  console.log('Loading development environment');
   dotenv.config();
 }
-
-
-
 const app = express();
-app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
-
 const isProduction = process.env.NODE_ENV === 'production';
 
+
 const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
-
-
-
 const db = new pg.Pool({
   connectionString: connectionString,
   ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
-
-
 db.connect()
   .then(() => console.log('Connected to the database'))
   .catch(err => console.error('Error connecting to the database:', err));
 
-export default db;
-
-
+app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -67,8 +57,37 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-
 const PgSession = pgSession(session);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: 'None', // Allows cross-origin cookies
+      secure: false,   // Set to true if using HTTPS
+      domain: '.onrender.com'
+    },
+    store: new PgSession({
+      pool: db,
+      tableName: 'session',
+    }),
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  console.log('Session ID:', req.sessionID);
+  console.log('Session:', JSON.stringify(req.session, null, 2));
+  console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+  console.log('Is Authenticated:', req.isAuthenticated());
+  next();
+});
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail', // or any other email service
@@ -86,38 +105,7 @@ transporter.verify((error, success) => {
   }
 });
 
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "none", // Allows cross-origin cookies
-      secure: true,   // Set to true if using HTTPS
-      domain: '.onrender.com'
-    },
-    store: new PgSession({
-      pool: db,
-      tableName: 'session',
-    }),
-  })
-);
-
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Credentials', true);
-//   res.header('Access-Control-Allow-Origin', 'https://keeper-frontend-36zj.onrender.com');
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-//   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-//   next();
-// });
-
-
-app.use(passport.initialize());
-app.use(passport.session());
-
+//Passport Local Strategy
 
 passport.use("local", 
   new LocalStrategy({
@@ -133,16 +121,19 @@ passport.use("local",
       const user = result.rows[0];
 
       if (!user) {
+        console.log('No user found with identifier:', identifier);
         return done(null, false, { message: 'Incorrect username or email.' });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
+        console.log('Password mismatch for user:', identifier);
         return done(null, false, { message: 'Incorrect password.' });
       }
-
+      console.log('User authenticated successfully:', user.id);
       return done(null, user);
     } catch (err) {
+      console.error('Error in LocalStrategy:', err);
       return done(err);
     }
   })
@@ -187,7 +178,7 @@ async (request, accessToken, refreshToken, profile, done) => {
 
 
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user);
+  console.log('Serializing user:', user.id);
   done(null, user.id);
 });
 
@@ -207,26 +198,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-
-
-// Initiate Google OAuth login
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    console.log("Google login successful for user:", req.user);
-    req.login(req.user, (err) => {
-      if (err) {
-        console.error("Error logging in the user after Google authentication:", err);
-        return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
-      }
-      res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
-    });
-  }
-);
-
-
+//POST ROUTES
 
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -302,7 +274,6 @@ Your App Team`,
   }
 });
 
-// Forgot Password Route
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
 
@@ -396,113 +367,79 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-
-
-
-
-// app.post('/login', (req, res, next) => {
-//   console.log("Login request received for user:", req.body.identifier);
-//   const { identifier, password } = req.body;
-//   if (!identifier || !password) {
-//     return res.status(400).json({ message: 'Missing credentials' });
-//   }
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) {
-//       console.error("Authentication error:", err);
-//       return res.status(500).json({ message: 'Server error', error: err });
-//     }
-//     if (!user) {
-//       console.log("Authentication failed:", info.message);
-//       return res.status(400).json({ message: info.message || 'Login failed' });
-//     }
-//     req.logIn(user, (err) => {
-//       if (err) {
-//         console.error("Login error:", err);
-//         return res.status(500).json({ message: 'Login failed', error: err });
-//       }
-
-//       // Adjust session expiration based on "remember me"
-//       if (req.body.rememberMe) {
-//         req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-//       } else {
-//         req.session.cookie.expires = null; // Session ends when the browser is closed
-//       }
-
-//       console.log("User logged in successfully:", user.username);
-//       return res.status(200).json({ message: 'Logged in successfully', user });
-//     });
-//   })(req, res, next);
-// });
-
 app.post('/login', (req, res, next) => {
   console.log("Login request received for user:", req.body.identifier);
   const { identifier, password, rememberMe } = req.body;
   
-  if (!identifier || !password) {
-    return res.status(400).json({ message: 'Missing credentials' });
-  }
-  
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      console.error("Authentication error:", err);
-      return res.status(500).json({ message: 'Server error', error: err });
+    if (!identifier || !password) {
+      console.log("Missing credentials");
+      return res.status(400).json({ message: 'Missing credentials' });
     }
     
-    if (!user) {
-      console.log("Authentication failed:", info.message);
-      return res.status(400).json({ message: info.message || 'Login failed' });
-    }
-    
-    req.logIn(user, (err) => {
+    passport.authenticate('local', (err, user, info) => {
       if (err) {
-        console.error("Login error:", err);
-        return res.status(500).json({ message: 'Login failed', error: err });
+        console.error("Authentication error:", err);
+        return res.status(500).json({ message: 'Server error', error: err });
       }
       
-      // Adjust session expiration based on "remember me"
-      if (rememberMe) {
-        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-      } else {
-        req.session.cookie.expires = null; // Session ends when the browser is closed
+      if (!user) {
+        console.log("Authentication failed:", info.message);
+        return res.status(400).json({ message: info.message || 'Login failed' });
       }
       
-      console.log("User logged in successfully:", user.username);
-      console.log("Session ID:", req.sessionID);
-      console.log("Session:", JSON.stringify(req.session, null, 2));
-      
-      // Save the session explicitly
-      req.session.save((err) => {
+      req.logIn(user, (err) => {
         if (err) {
-          console.error("Session save error:", err);
-          return res.status(500).json({ message: 'Session save failed', error: err });
+          console.error("Login error:", err);
+          return res.status(500).json({ message: 'Login failed', error: err });
         }
         
-        // Return user info without sensitive data
-        const safeUser = {
-          id: user.id,
-          username: user.username,
-          email: user.email
-        };
+        // Adjust session expiration based on "remember me"
+        if (rememberMe) {
+          req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+        } else {
+          req.session.cookie.expires = null; // Session ends when the browser is closed
+        }
         
-        return res.status(200).json({ 
-          message: 'Logged in successfully', 
-          user: safeUser,
-          sessionID: req.sessionID
+        console.log("User logged in successfully:", user.username);
+        console.log("Session ID:", req.sessionID);
+        console.log("Session:", JSON.stringify(req.session, null, 2));
+        
+        // Save the session explicitly
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: 'Session save failed', error: err });
+          }
+
+          if (req.isAuthenticated()) {
+            console.log("User is authenticated after login");
+          }
+          
+          // Return user info without sensitive data
+          const safeUser = {
+            id: user.id,
+            username: user.username,
+            email: user.email
+          };
+          console.log("Safe user:", safeUser);
+          return res.status(200).json({ 
+            message: 'Logged in successfully', 
+            user: safeUser,
+            sessionID: req.sessionID
+          });
         });
       });
-    });
-  })(req, res, next);
-});
-
-
-app.post('/logout', (req, res) => {
-  req.logout(err => {
-    if (err) {
-      return res.status(500).send('Logout failed');
-    }
-    res.status(200).json({ message: 'Logged out successfully' });
+    })(req, res, next);
   });
-});
+
+  app.post('/logout', (req, res) => {
+    req.logout(err => {
+      if (err) {
+        return res.status(500).send('Logout failed');
+      }
+      res.status(200).json({ message: 'Logged out successfully' });
+    });
+  });
 
 app.post('/verify-email', async (req, res) => {
   const { email, verificationCode } = req.body;
@@ -532,7 +469,42 @@ app.post('/verify-email', async (req, res) => {
   }
 });
 
+app.post('/add', async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
 
+  const { title, content } = req.body;
+
+  try {
+    const result = await db.query(
+      'INSERT INTO notes (title, content, user_id) VALUES ($1, $2, $3) RETURNING *;',
+      [title, content, req.user.id]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Database error', err);
+    res.status(500).send('Server error');
+  }
+});
+
+//GET ROUTES
+
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    console.log("Google login successful for user:", req.user);
+    req.login(req.user, (err) => {
+      if (err) {
+        console.error("Error logging in the user after Google authentication:", err);
+        return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
+      }
+      res.redirect('https://keeper-frontend-36zj.onrender.com/?google_auth=success');
+    });
+  }
+);
 
 app.get("/", async (req, res) => {
   try {
@@ -558,26 +530,26 @@ app.get('/notes', async (req, res) => {
   }
 });
 
-
-
-// Endpoint to add a new note (example of handling POST requests)
-app.post('/add', async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: 'Not authenticated' });
+app.get('/me', (req, res) => {
+  console.log('Session:', req.session);
+  console.log('User:', req.user);
+  console.log('Is Authenticated:', req.isAuthenticated());
+  if (req.isAuthenticated()) {
+    const { id, username, email } = req.user;
+    res.json({ user: { id, username, email } });
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
   }
+});
 
-  const { title, content } = req.body;
-
-  try {
-    const result = await db.query(
-      'INSERT INTO notes (title, content, user_id) VALUES ($1, $2, $3) RETURNING *;',
-      [title, content, req.user.id]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error('Database error', err);
-    res.status(500).send('Server error');
-  }
+app.get('/check-session', (req, res) => {
+  console.log('Session check - Session:', req.session);
+  console.log('Session check - User:', req.user);
+  console.log('Session check - Is Authenticated:', req.isAuthenticated());
+  res.json({
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user
+  });
 });
 
 
@@ -593,7 +565,7 @@ app.delete("/notes/:id", async (req, res) => {
   }
 });
 
-// Endpoint to edit a note by ID
+
 app.put("/notes/:id", async (req, res) => {
   const noteId = req.params.id;
   const { title, content } = req.body;
@@ -609,37 +581,6 @@ app.put("/notes/:id", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-app.get('/me', (req, res) => {
-  console.log('Session:', req.session);
-  console.log('User:', req.user);
-  console.log('Is Authenticated:', req.isAuthenticated());
-  if (req.isAuthenticated()) {
-    const { id, username, email } = req.user;
-    res.json({ user: { id, username, email } });
-  } else {
-    res.status(401).json({ message: 'Not authenticated' });
-  }
-});
-
-app.use((req, res, next) => {
-  console.log('Session ID:', req.sessionID);
-  console.log('Session:', JSON.stringify(req.session, null, 2));
-  console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
-  console.log('Is Authenticated:', req.isAuthenticated());
-  next();
-});
-
-app.get('/check-session', (req, res) => {
-  console.log('Session check - Session:', req.session);
-  console.log('Session check - User:', req.user);
-  console.log('Session check - Is Authenticated:', req.isAuthenticated());
-  res.json({
-    isAuthenticated: req.isAuthenticated(),
-    user: req.user
-  });
-});
-
 
 
 app.listen(port, () => {
