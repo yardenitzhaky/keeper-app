@@ -85,7 +85,20 @@ function App() {
   async function updateNote(updatedNote) {
     console.log("Updating note:", updatedNote);
     try {
-      const response = await axios.put(`${API_URL}/notes/${updatedNote.id}`,{withCredentials: true}, updatedNote,);
+      // Ensure title and content are not null or undefined
+      if (!updatedNote.title || !updatedNote.content) {
+        throw new Error("Title and content are required");
+      }
+  
+      const response = await axios.put(
+        `${API_URL}/notes/${updatedNote.id}`,
+        {
+          title: updatedNote.title,
+          content: updatedNote.content
+        },
+        { withCredentials: true }
+      );
+      console.log("Update response:", response.data);
       setNotes(prevNotes =>
         prevNotes.map(noteItem =>
           noteItem.id === updatedNote.id ? response.data : noteItem
@@ -93,7 +106,8 @@ function App() {
       );
       setEditNote(null);
     } catch (error) {
-      console.error("There was an error updating the note!", error);
+      console.error("Error updating note:", error.response?.data || error.message);
+      // You might want to show an error message to the user here
     }
   }
 
