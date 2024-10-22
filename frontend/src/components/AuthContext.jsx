@@ -1,8 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
-axios.defaults.headers.common['SameSite'] = 'None';
-axios.defaults.headers.common['Secure'] = true;
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 

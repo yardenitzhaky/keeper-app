@@ -6,8 +6,6 @@ import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-axios.defaults.headers.common['SameSite'] = 'None';
-axios.defaults.headers.common['Secure'] = true;
 import LoadingButton from "./LoadingButton.jsx";
 import LoadingSpinner from "./LoadingSpinner.jsx";
 import CircularProgress from '@mui/material/CircularProgress';

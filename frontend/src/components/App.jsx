@@ -11,8 +11,6 @@ import VerifyEmail from "./VerifyEmail";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-axios.defaults.headers.common['SameSite'] = 'None';
-axios.defaults.headers.common['Secure'] = true;
 import { AuthContext } from "./AuthContext";
 import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute
 import LoadingSpinner from "./LoadingSpinner";
