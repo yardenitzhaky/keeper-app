@@ -53,6 +53,7 @@ function Register() {
         }));
       }
     }
+  };
 
 
   const validateForm = () => {
@@ -154,6 +155,6 @@ function Register() {
     </div>
   );
 }
-}
+
 
 export default Register;
