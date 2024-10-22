@@ -249,11 +249,14 @@ app.post('/register', async (req, res) => {
   }
 
   try {
+
+    const lowercaseUsername = username.toLowerCase();
+    const lowercaseEmail = email.toLowerCase();
     // Check if the username or email already exists
-    const userExists = await db.query('SELECT * FROM users WHERE username = $1 OR email = $2', [
-      username,
-      email,
-    ]);
+    const userExists = await db.query(
+      'SELECT * FROM users WHERE LOWER(username) = $1 OR LOWER(email) = $2',
+      [lowercaseUsername, lowercaseEmail]
+    );
 
     if (userExists.rows.length > 0) {
       return res.status(400).json({ message: 'Username or email already exists.' });
