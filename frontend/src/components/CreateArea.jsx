@@ -6,7 +6,7 @@ import { Fab } from "@mui/material";
 import { Zoom } from "@mui/material";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-import LoadingButton from "./LoadingButton";
+import LoadingButton from "./LoadingButton.jsx";
 
 
 
