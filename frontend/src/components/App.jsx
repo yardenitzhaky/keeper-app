@@ -121,6 +121,7 @@ function App() {
   return (
       <Router>
         <Header />
+        <CookieAlert />
         <Routes>
           <Route
             path="/"
