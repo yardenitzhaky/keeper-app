@@ -1,3 +1,143 @@
+// import express from "express";
+// import bodyParser from "body-parser";
+// import pg from "pg";
+// import cors from 'cors';
+// import bcrypt from 'bcrypt';
+// import LocalStrategy from 'passport-local';
+// import session from 'express-session';
+// import pgSession from 'connect-pg-simple';
+// import passport from 'passport';
+// import GoogleStrategy  from 'passport-google-oauth2';
+// import validator from 'validator';
+// import crypto from 'crypto';
+// import nodemailer from 'nodemailer';
+// import dotenv from 'dotenv';
+// import exp from "constants";
+// import cookieParser from 'cookie-parser';
+
+// const app = express();
+
+// // CORS configuration
+// const corsOptions = {
+//   origin: 'https://keeper-frontend-36zj.onrender.com', // Replace with your frontend URL
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   allowedHeaders: [
+//     'Content-Type', 
+//     'Authorization',
+//     'X-Requested-With',
+//     'Accept',
+//     'Origin'
+//   ],
+// };
+
+// app.use(cors(corsOptions));
+// app.use(cookieParser());
+
+// // Set custom headers for all responses
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   res.header('Access-Control-Allow-Origin', req.headers.origin);
+//   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   next();
+// });
+
+// app.use((req, res, next) => {
+//   // HSTS (uncomment if you're using HTTPS)
+//   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  
+//   // Prevent clickjacking
+//   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  
+//   // XSS protection
+//   res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+//   // Disable MIME type sniffing
+//   res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+//   // Referrer policy
+//   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+//   next();
+// });
+
+
+
+// if (process.env.NODE_ENV !== 'production') {
+//   console.log('Loading development environment');
+//   dotenv.config();
+// }
+// const port = process.env.PORT || 10000;
+// const isProduction = process.env.NODE_ENV === 'production';
+
+
+// const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+// const db = new pg.Pool({
+//   connectionString: connectionString,
+//   ssl: { rejectUnauthorized: false }
+// });
+
+
+
+// db.connect()
+//   .then(() => console.log('Connected to the database'))
+//   .catch(err => console.error('Error connecting to the database:', err));
+
+// app.use(bodyParser.json());
+// app.use(express.json());
+
+// const allowedOrigins = [
+//   'https://keeper-frontend-36zj.onrender.com',
+//   'https://keeper-backend-kgj9.onrender.com',
+//   'http://localhost:5173',
+//   'https://localhost:5173'
+//   // Add any other origins you need, including local development URLs
+// ];
+
+// const PgSession = pgSession(session);
+
+// app.set('trust proxy', 1); // trust first proxy
+
+
+
+
+// app.use(
+//   session({
+//     store: new PgSession({
+//       pool: db,
+//       tableName: 'session',
+//     }),
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     proxy: true,
+//     cookie: {
+//       maxAge: 30 * 24 * 60 * 60 * 1000,
+//       secure: true,
+//       httpOnly: true,
+//       sameSite: 'none',
+//       path: '/',
+//       //domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
+//     },
+//     name: 'keeper.sid',
+//   })
+// );
+
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+
+// app.use((req, res, next) => {
+//   console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
+//   console.log('Session:', JSON.stringify(req.session, null, 2));
+//   console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+//   console.log('Is Authenticated:', req.isAuthenticated());
+//   next();
+// });
+
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
@@ -7,95 +147,61 @@ import LocalStrategy from 'passport-local';
 import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import passport from 'passport';
-import GoogleStrategy  from 'passport-google-oauth2';
+import GoogleStrategy from 'passport-google-oauth2';
 import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import exp from "constants";
 import cookieParser from 'cookie-parser';
 
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: 'https://keeper-frontend-36zj.onrender.com', // Replace with your frontend URL
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['set-cookie'],
-};
-
-app.use(cors(corsOptions));
-app.use(cookieParser());
-
-// Set custom headers for all responses
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
-
-app.use((req, res, next) => {
-  // HSTS (uncomment if you're using HTTPS)
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  
-  // Prevent clickjacking
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  
-  // XSS protection
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  
-  // Disable MIME type sniffing
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  
-  // Referrer policy
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  next();
-});
-
-
-
+// Load environment variables
 if (process.env.NODE_ENV !== 'production') {
   console.log('Loading development environment');
   dotenv.config();
 }
+
+const FRONTEND_URL = process.env.NODE_ENV === 'production'
+  ? 'https://keeper-frontend-36zj.onrender.com'
+  : 'http://localhost:5173';
+
 const port = process.env.PORT || 10000;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// CORS configuration - remove duplicate allowedHeaders
+const corsOptions = {
+  origin: FRONTEND_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+};
 
-const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+// Database configuration
+const connectionString = process.env.DATABASE_URL || 
+  `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+
 const db = new pg.Pool({
   connectionString: connectionString,
   ssl: { rejectUnauthorized: false }
 });
 
-
-
-db.connect()
-  .then(() => console.log('Connected to the database'))
-  .catch(err => console.error('Error connecting to the database:', err));
-
+// Middleware setup - order is important
+app.set('trust proxy', 1);
+app.use(cookieParser());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-const allowedOrigins = [
-  'https://keeper-frontend-36zj.onrender.com',
-  'https://keeper-backend-kgj9.onrender.com',
-  'http://localhost:5173',
-  'https://localhost:5173'
-  // Add any other origins you need, including local development URLs
-];
-
+// Session configuration
 const PgSession = pgSession(session);
-
-app.set('trust proxy', 1); // trust first proxy
-
-
-
 
 app.use(
   session({
@@ -108,29 +214,59 @@ app.use(
     saveUninitialized: false,
     proxy: true,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       secure: true,
       httpOnly: true,
       sameSite: 'none',
       path: '/',
-      //domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
   })
 );
 
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-
+// Security headers middleware
 app.use((req, res, next) => {
-  console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
-  console.log('Session:', JSON.stringify(req.session, null, 2));
-  console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
-  console.log('Is Authenticated:', req.isAuthenticated());
+  // Security headers
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // CORS headers - only set what's necessary
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', FRONTEND_URL);
+  
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(', '));
+    return res.status(200).send();
+  }
+  
   next();
 });
+
+// Logging middleware (for development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
+    console.log('Session:', JSON.stringify(req.session, null, 2));
+    console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+    console.log('Is Authenticated:', req.isAuthenticated());
+    next();
+  });
+}
+
+// Database connection
+db.connect()
+  .then(() => console.log('Connected to the database'))
+  .catch(err => console.error('Error connecting to the database:', err));
+
+// ... rest of your code (passport strategies, routes, etc.)
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail', // or any other email service
