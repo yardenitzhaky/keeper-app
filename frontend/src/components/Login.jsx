@@ -147,14 +147,10 @@ const handleGoogleSignIn = (e) => {
         </LoadingButton>
       </form>
       
-      <LoadingButton
-        onClick={handleGoogleSignIn}
-        loading={isLoading}
-        className="social-login-button"
-      >
-        <img src="/images/google_logo.png" alt="Google icon" />
-        Sign in with Google
-      </LoadingButton>
+      <button onClick={handleGoogleSignIn} className="social-login-button">
+          <img src="/images/google_logo.png" alt="Google icon" />
+          Sign in with Google
+        </button>
 
       <p>
         Don't have an account? <Link to="/Register">Register here</Link>
