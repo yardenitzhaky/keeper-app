@@ -263,7 +263,7 @@ app.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationCode = crypto.randomBytes(20).toString('hex');
+    const verificationCode = Math.floor(10000 + Math.random() * 90000).toString();
     const result = await db.query(
       'INSERT INTO users (username, email, password, verification_code, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [username, email, hashedPassword, verificationCode, 'pending']
