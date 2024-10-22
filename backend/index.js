@@ -19,7 +19,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://keeper-frontend-36zj.onrender.com', // Replace with your frontend URL
+  origin: 'https://keeper-frontend-36zj.onrender.com',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -158,6 +158,43 @@ passport.use("local",
   })
 );
 
+// passport.use("google", new GoogleStrategy({
+//   clientID: process.env.GOOGLE_CLIENT_ID,
+//   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//   callbackURL: process.env.GOOGLE_CALLBACK_URL,
+//   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+//   passReqToCallback: true
+// },
+// async (request, accessToken, refreshToken, profile, done) => {
+//   try {
+//     // Check if the user already exists in your database
+//     const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
+//     let user = result.rows[0];
+
+//     if (!user) {
+//       // If user doesn't exist, create a new user in your database
+//       const insertResult = await db.query(
+//         'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+//         [profile.id, profile.displayName, profile.id, "google email", "active"]
+//       );
+//       user = insertResult.rows[0];
+//     } else if (user.status !== 'active') {
+//       // If the user exists but their status is not active, update it to active
+//       const updateResult = await db.query(
+//         'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
+//         ['active', user.id]
+//       );
+//       user = updateResult.rows[0];
+//     }
+
+
+//     return done(null, user);  // Continue with the user object
+//   } catch (err) {
+//     return done(err, null);
+//   }
+// }
+// ));
+
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -167,19 +204,42 @@ passport.use("google", new GoogleStrategy({
 },
 async (request, accessToken, refreshToken, profile, done) => {
   try {
-    // Check if the user already exists in your database
+    console.log('Google profile:', profile); // Debug log to see profile structure
+
+    // Extract email from Google profile
+    const userEmail = profile.email || profile.emails[0].value;
+    
+    // First check if user exists by Google ID
     const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
     let user = result.rows[0];
 
     if (!user) {
-      // If user doesn't exist, create a new user in your database
-      const insertResult = await db.query(
-        'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [profile.id, profile.displayName, profile.id, "google email", "active"]
-      );
-      user = insertResult.rows[0];
+      // Check if user exists with this email
+      const emailCheck = await db.query('SELECT * FROM users WHERE email = $1', [userEmail]);
+      
+      if (emailCheck.rows.length > 0) {
+        // Update existing user with Google ID
+        const updateResult = await db.query(
+          'UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *',
+          [profile.id, userEmail]
+        );
+        user = updateResult.rows[0];
+      } else {
+        // Create new user with Google profile info
+        const insertResult = await db.query(
+          'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [
+            profile.id,
+            profile.displayName,
+            profile.id, // Using Google ID as password
+            userEmail,
+            "active"
+          ]
+        );
+        user = insertResult.rows[0];
+      }
     } else if (user.status !== 'active') {
-      // If the user exists but their status is not active, update it to active
+      // Update status if needed
       const updateResult = await db.query(
         'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
         ['active', user.id]
@@ -187,9 +247,10 @@ async (request, accessToken, refreshToken, profile, done) => {
       user = updateResult.rows[0];
     }
 
-
-    return done(null, user);  // Continue with the user object
+    console.log('Authenticated user:', user); // Debug log
+    return done(null, user);
   } catch (err) {
+    console.error('Google authentication error:', err);
     return done(err, null);
   }
 }
