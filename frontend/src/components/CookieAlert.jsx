@@ -90,10 +90,9 @@ const CookieAlert = () => {
                 <ol>
                   <li>Click Safari in the top menu</li>
                   <li>Select "Settings" (or press ⌘ + ,)</li>
-                  <li>Go to "Privacy & Security"</li>
+                  <li>Go to "Privacy"</li>
                   <li>Under "Website tracking":</li>
                   <li>Uncheck "Prevent cross-site tracking"</li>
-                  <li>Select "Allow all cookies" under Cookies and website data</li>
                   <li>Refresh this page</li>
                 </ol>
               </div>
@@ -105,7 +104,6 @@ const CookieAlert = () => {
                   <li>Scroll down and tap "Safari"</li>
                   <li>Under "Privacy & Security":</li>
                   <li>Turn off "Prevent Cross-Site Tracking"</li>
-                  <li>Turn off "Block All Cookies"</li>
                   <li>Refresh this page</li>
                 </ol>
               </div>
