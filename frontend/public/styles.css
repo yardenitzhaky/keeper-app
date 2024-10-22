@@ -443,3 +443,25 @@ form.create-note button {
   50% { opacity: 0.5; }
 }
 
+/* Disabled state styles for note buttons */
+.note button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Disabled state styles for create note form */
+.create-note input:disabled,
+.create-note textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Loading button styles */
+.fab-progress {
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+

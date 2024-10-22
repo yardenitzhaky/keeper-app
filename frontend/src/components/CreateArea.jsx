@@ -8,6 +8,8 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 import LoadingButton from "./LoadingButton.jsx";
 import LoadingSpinner from "./LoadingSpinner.jsx";
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 function CreateArea(props) {
@@ -93,8 +95,12 @@ function CreateArea(props) {
           rows={isExpanded ? 3 : 1}
         />
         <Zoom in={isExpanded}>
-        <Fab onClick={submitNote}>
-        {props.editNote ? <DoneIcon /> : <AddIcon />}
+        <Fab onClick={submitNote} disabled={isLoading}>
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              props.editNote ? <DoneIcon /> : <AddIcon />
+            )}
         </Fab>
         </Zoom>
       </form>
