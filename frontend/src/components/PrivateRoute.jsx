@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import LoadingSpinner from "./LoadingSpinner";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -14,8 +15,10 @@ function PrivateRoute({ children }) {
 
   if (loading) {
     // Optionally, display a loading indicator
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
+
+
 
   console.log("PrivateRoute - Rendering children");
 
