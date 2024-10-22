@@ -217,7 +217,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-//POST ROUTES
+//POST ROUTES.
 
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
