@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
 import { useNavigate, Link } from "react-router-dom";
+import LoadingButton from "./LoadingButton";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 
@@ -12,6 +13,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,6 +24,8 @@ function Register() {
       setErrors(validationErrors);
       return;
     }
+
+    setIsLoading(true);
     try {
       await axios.post(`${API_URL}/register`, {
         username,
@@ -52,6 +56,8 @@ function Register() {
           server: "Registration failed. Please try again later."
         }));
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,65 +101,100 @@ function Register() {
     return strongPasswordRegex.test(password);
   };
 
-  return (
-    <div className="auth-container">
-      <img src="/images/logo.PNG" alt="Logo" className="logo" />
-      <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        {errors.username && <p className="error">{errors.username}</p>}
+  const handleInputChange = (field, value) => {
+    // Update the field value
+    switch (field) {
+      case 'username':
+        setUsername(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+      case 'confirmPassword':
+        setConfirmPassword(value);
+        break;
+    }
 
-        <input
-          type="text"
-          id="email"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        {errors.email && <p className="error">{errors.email}</p>}
+    // Clear the specific error when user types
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      delete newErrors.server;
+      return newErrors;
+    });
+};
 
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {errors.password && <p className="error">{errors.password}</p>}
+return (
+  <div className="auth-container">
+    <img src="/images/logo.PNG" alt="Logo" className="logo" />
+    <h2>Register</h2>
+    <form onSubmit={handleRegister}>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => handleInputChange('username', e.target.value)}
+        required
+      />
+      {errors.username && <p className="error">{errors.username}</p>}
 
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
+      <input
+        type="text"
+        id="email"
+        name="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => handleInputChange('email', e.target.value)}
+        required
+      />
+      {errors.email && <p className="error">{errors.email}</p>}
 
-        {/* Server Error */}
-        {errors.server && <p className="error">{errors.server}</p>}
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => handleInputChange('password', e.target.value)}
+        required
+      />
+      {errors.password && <p className="error">{errors.password}</p>}
 
-        <button type="submit">Register</button>
-      </form>
-      <p>
-        Already have an account? <Link to="/Login">Login here</Link>
-      </p>
-    </div>
-  );
+      <input
+        type="password"
+        id="confirmPassword"
+        name="confirmPassword"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+        required
+      />
+      {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
+
+      {/* Server Error */}
+      {errors.server && <p className="error">{errors.server}</p>}
+
+      <LoadingButton
+        onClick={(e) => {
+          e.preventDefault();
+          handleRegister(e);
+        }}
+        loading={isLoading}
+        className="w-full p-3 bg-[#f5ba13] text-white rounded hover:bg-[#e0a800] disabled:opacity-70"
+      >
+        Register
+      </LoadingButton>
+    </form>
+    <p>
+      Already have an account? <Link to="/Login">Login here</Link>
+    </p>
+  </div>
+);
 }
 
 
