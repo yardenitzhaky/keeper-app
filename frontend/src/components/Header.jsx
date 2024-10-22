@@ -6,10 +6,18 @@ import HighlightIcon from "@mui/icons-material/Highlight";
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    navigate("/login");
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -21,9 +29,13 @@ function Header() {
         </span>
       </h1>
       {user && (
-        <button onClick={handleLogout} className="logout-button">
+        <LoadingButton
+          onClick={handleLogout}
+          loading={isLoggingOut}
+          className="logout-button"
+        >
           Logout
-        </button>
+        </LoadingButton>
       )}
     </header>
   );

@@ -16,6 +16,8 @@ function Login() {
   const location = useLocation();
   const navigate = useNavigate();
   const { login, handleGoogleAuthSuccess, user, setUser, checkAuthStatus } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -45,6 +47,7 @@ function Login() {
       setErrors(validationErrors);
       return;
     }
+    setIsLoading(true); // Start loading
     console.log("Login attempt started for user:", identifier, "and the remember me status is:", rememberMe);
     try {
       const loggedInUser = await login(identifier, password, rememberMe);
@@ -60,8 +63,10 @@ function Login() {
           error.message ||
           'Login failed',
   });
-    }
+  } finally {
+    setIsLoading(false); // Stop loading
   };
+}
 
 
   const validateForm = () => {
@@ -126,26 +131,37 @@ const handleGoogleSignIn = (e) => {
         </label>
 
         {errors.server && (
-  <p className="error" role="alert">
-    {errors.server}
-  </p>
-)}
+          <p className="error" role="alert">
+            {errors.server}
+          </p>
+        )}
 
-
-        <button type="submit">Login</button>
+        <LoadingButton
+          loading={isLoading}
+          type="submit"
+          className="w-full p-3 bg-[#f5ba13] text-white rounded hover:bg-[#e0a800] disabled:opacity-70"
+        >
+          Login
+        </LoadingButton>
       </form>
-      <button onClick={handleGoogleSignIn} className="social-login-button">
-          <img src="/images/google_logo.png" alt="Google icon" />
-          Sign in with Google
-        </button>
-            <p>
+      
+      <LoadingButton
+        onClick={handleGoogleSignIn}
+        loading={isLoading}
+        className="social-login-button"
+      >
+        <img src="/images/google_logo.png" alt="Google icon" />
+        Sign in with Google
+      </LoadingButton>
+
+      <p>
         Don't have an account? <Link to="/Register">Register here</Link>
       </p>
       <p>
         <Link to="/forgot-password">Forgot Password?</Link>
       </p>
     </div>
-  );
+);
 }
 
 export default Login;
