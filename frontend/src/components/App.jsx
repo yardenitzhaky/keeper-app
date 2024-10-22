@@ -144,6 +144,7 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/loading" element={<LoadingSpinner />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Footer />
