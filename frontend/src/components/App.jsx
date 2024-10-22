@@ -125,7 +125,6 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-              <div className="notes-container">
                 <CreateArea onAdd={addNote} editNote={editNote} onUpdate={updateNote} />
                 {notes.map((noteItem) => (
                   <Note
@@ -137,7 +136,6 @@ function App() {
                     onEdit={handleEditClick}
                   />
                 ))}
-              </div>
             </PrivateRoute>
             }
           />
