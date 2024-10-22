@@ -479,6 +479,19 @@ form.create-note button {
   animation: pulse 1s ease infinite;
 }
 
+.spinner-subtext {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: -60px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  animation: pulse 1s ease infinite;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

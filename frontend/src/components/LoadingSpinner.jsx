@@ -8,6 +8,7 @@ const LoadingSpinner = () => {
         <div className="spinner-ring inner"></div>
         <div className="spinner-dot"></div>
         <div className="spinner-text">Loading...</div>
+        <div className="spinner-subtext">Please note: Initial load may take up to 50 seconds as the server spins up on Render's free tier.</div>
       </div>
     </div>
   );
