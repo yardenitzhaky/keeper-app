@@ -380,23 +380,25 @@ form.create-note button {
   }
 } /* Closed media query */
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  /* Adjust create-note form width */
-  form.create-note {
-    width: 90%;
-  }
 
-  /* Adjust note width */
+@media (min-width: 601px) {
+  .notes-container {
+    display: block; /* Reset the flex container for desktop */
+  }
+  
   .note {
-    width: calc(50% - 32px);
+    float: left; /* Keep the original floating behavior */
+    width: 400px;
     margin: 16px;
   }
 
-  /* Adjust auth container margin */
   .auth-container {
     margin: 40px auto;
     padding: 30px;
+  }
+
+  form.create-note {
+    width: 90%;
   }
 }
 
