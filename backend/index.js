@@ -130,9 +130,12 @@ passport.use("local",
   },
   async (identifier, password, done) => {
     try {
+
+      const lowercaseIdentifier = identifier.toLowerCase();
+
       const result = await db.query(
-        'SELECT * FROM users WHERE (username = $1 OR email = $1) AND status = $2',
-        [identifier, 'active']
+        'SELECT * FROM users WHERE (LOWER(username) = $1 OR LOWER(email) = $1) AND status = $2',
+        [lowercaseIdentifier, 'active']
       );
       const user = result.rows[0];
 
