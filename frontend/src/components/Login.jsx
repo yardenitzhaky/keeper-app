@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['SameSite'] = 'None';
+axios.defaults.headers.common['Secure'] = true;
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import LoadingButton from "./LoadingButton";
 import LoadingSpinner from "./LoadingSpinner";

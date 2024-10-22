@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['SameSite'] = 'None';
+axios.defaults.headers.common['Secure'] = true;
 
 import { useLocation, useNavigate } from "react-router-dom";
 

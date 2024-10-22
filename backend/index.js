@@ -23,6 +23,7 @@ const corsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['set-cookie'],
 };
 
 app.use(cors(corsOptions));
@@ -36,6 +37,26 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+app.use((req, res, next) => {
+  // HSTS (uncomment if you're using HTTPS)
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  
+  // Prevent clickjacking
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  
+  // XSS protection
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // Disable MIME type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Referrer policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  next();
+});
+
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -88,7 +109,7 @@ app.use(
     proxy: true,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: isProduction,
+      secure: true,
       httpOnly: true,
       sameSite: 'none',
       domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',

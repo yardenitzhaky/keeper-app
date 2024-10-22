@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['SameSite'] = 'None';
+axios.defaults.headers.common['Secure'] = true;
 import { useNavigate, Link } from "react-router-dom";
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
