@@ -112,7 +112,8 @@ app.use(
       secure: true,
       httpOnly: true,
       sameSite: 'none',
-      domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
+      path: '/',
+      //domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
     },
     name: 'keeper.sid',
   })
@@ -451,8 +452,10 @@ app.post('/login', (req, res, next) => {
         return res.status(500).json({ message: 'Login failed', error: loginErr });
       }
 
-      req.session.cookie.secure = true;
-      req.session.cookie.sameSite = 'none';
+      res.set({
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': 'https://keeper-frontend-36zj.onrender.com'
+      });
       
       // Adjust session expiration based on "remember me"
       if (rememberMe) {

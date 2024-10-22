@@ -62,7 +62,13 @@ export function AuthProvider({ children }) {
   const checkAuthStatus = async () => {
     try {
       console.log("Checking auth status...");
-      const response = await axios.get(`${API_URL}/check-session`, { withCredentials: true });
+      const response = await axios.get(`${API_URL}/check-session`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
       console.log("Auth status check response:", response.data);
       if (response.data.isAuthenticated && response.data.user) {
         console.log("Setting user:", response.data.user);
