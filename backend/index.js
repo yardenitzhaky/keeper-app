@@ -313,15 +313,32 @@ app.post('/register', async (req, res) => {
 
     const lowercaseUsername = username.toLowerCase();
     const lowercaseEmail = email.toLowerCase();
-    // Check if the username or email already exists
-    const userExists = await db.query(
-      'SELECT * FROM users WHERE LOWER(username) = $1 OR LOWER(email) = $2',
-      [lowercaseUsername, lowercaseEmail]
+
+    // First check username
+    const usernameCheck = await db.query(
+      'SELECT * FROM users WHERE LOWER(username) = $1',
+      [lowercaseUsername]
     );
 
-    if (userExists.rows.length > 0) {
-      return res.status(400).json({ message: 'Username or email already exists.' });
+    if (usernameCheck.rows.length > 0) {
+      return res.status(409).json({
+        field: 'username',
+        message: 'This username is already taken. Please choose a different one.'
+      });
     }
+
+      // Then check email
+      const emailCheck = await db.query(
+        'SELECT * FROM users WHERE LOWER(email) = $1',
+        [lowercaseEmail]
+      );
+  
+      if (emailCheck.rows.length > 0) {
+        return res.status(409).json({
+          field: 'email',
+          message: 'An account with this email already exists.'
+        });
+      }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationCode = Math.floor(10000 + Math.random() * 90000).toString();

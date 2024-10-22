@@ -31,10 +31,29 @@ function Register() {
       navigate("/verify-email", { state: { email } });
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error.message);
-      // Handle server-side errors
-      setErrors({ server: error.response?.data || "Registration failed" });
+      
+      if (error.response?.status === 409) {
+        // Handle conflict errors (username/email already exists)
+        const { field, message } = error.response.data;
+        setErrors(prev => ({
+          ...prev,
+          [field]: message
+        }));
+      } else if (error.response?.data?.message) {
+        // Handle other specific error messages from the server
+        setErrors(prev => ({
+          ...prev,
+          server: error.response.data.message
+        }));
+      } else {
+        // Handle generic errors
+        setErrors(prev => ({
+          ...prev,
+          server: "Registration failed. Please try again later."
+        }));
+      }
     }
-  };
+
 
   const validateForm = () => {
     const errors = {};
@@ -134,6 +153,7 @@ function Register() {
       </p>
     </div>
   );
+}
 }
 
 export default Register;
