@@ -1,8 +1,10 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
-axios.defaults.withCredentials = true;
+
+
 
 export const AuthContext = createContext();
 
@@ -18,7 +20,7 @@ export function AuthProvider({ children }) {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
       }
     );
       const user = response.data.user;

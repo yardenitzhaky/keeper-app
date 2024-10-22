@@ -31,8 +31,12 @@ app.use(cookieParser());
 // Set custom headers for all responses
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('Loading development environment');
@@ -81,6 +85,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       secure: isProduction,
@@ -424,6 +429,9 @@ app.post('/login', (req, res, next) => {
         console.error("Login error:", loginErr);
         return res.status(500).json({ message: 'Login failed', error: loginErr });
       }
+
+      req.session.cookie.secure = true;
+      req.session.cookie.sameSite = 'none';
       
       // Adjust session expiration based on "remember me"
       if (rememberMe) {
