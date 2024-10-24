@@ -1,6 +1,3 @@
-// ============================================================================
-// IMPORTS AND DEPENDENCIES
-// ============================================================================
 
 // Core Express and middleware imports
 import express from "express";
