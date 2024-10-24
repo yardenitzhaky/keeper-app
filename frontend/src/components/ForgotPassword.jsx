@@ -96,7 +96,7 @@ const ForgotPassword = () => {
       {/* Password Reset Form */}
       <form onSubmit={handleForgotPassword} noValidate>
         <input
-          type="email"
+          type="text"
           name="email"
           placeholder="Enter your registered email"
           value={email}
