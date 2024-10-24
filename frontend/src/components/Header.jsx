@@ -60,5 +60,4 @@ const Header = () => {
   );
 };
 
-// Make sure to export the component as default
 export default Header;
