@@ -571,14 +571,53 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-  app.post('/logout', (req, res) => {
-    req.logout(err => {
+  // app.post('/logout', (req, res) => {
+  //   req.logout(err => {
+  //     if (err) {
+  //       return res.status(500).send('Logout failed');
+  //     }
+  //     res.status(200).json({ message: 'Logged out successfully' });
+  //   });
+  // });
+
+  /**
+ * Logout endpoint - Cleans up session and cookies
+ */
+app.post('/logout', (req, res) => {
+  try {
+    // Destroy the session
+    req.session.destroy((err) => {
       if (err) {
+        console.error('Session destruction error:', err);
         return res.status(500).send('Logout failed');
       }
-      res.status(200).json({ message: 'Logged out successfully' });
+
+      // Clear the session cookie
+      res.clearCookie('keeper.sid', {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none',
+        domain: process.env.NODE_ENV === 'production' 
+          ? 'keeper-backend-kgj9.onrender.com' 
+          : 'localhost'
+      });
+
+      // Perform passport logout
+      req.logout((logoutErr) => {
+        if (logoutErr) {
+          console.error('Passport logout error:', logoutErr);
+          return res.status(500).send('Logout failed');
+        }
+
+        res.status(200).json({ message: 'Logged out successfully' });
+      });
     });
-  });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).send('Logout failed');
+  }
+});
 
 app.post('/verify-email', async (req, res) => {
   const { email, verificationCode } = req.body;

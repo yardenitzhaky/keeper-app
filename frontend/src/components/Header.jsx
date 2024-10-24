@@ -1,22 +1,32 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
-import HighlightIcon from "@mui/icons-material/Highlight";
-import LoadingButton from "./LoadingButton";
-import LoadingSpinner from "./LoadingSpinner";
-
-function Header() {
+const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [error, setError] = useState(null);
 
+  /**
+   * Handles complete logout process
+   * Cleans up all sessions, cookies, and state
+   */
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    setError(null);
+
     try {
       await logout();
-      navigate("/login");
+      
+      // Additional cleanup
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Redirect to login
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
+      setError("Logout failed. Please try again.");
+      
+      // Optional: Show error message to user
+      // You could add a toast notification here
     } finally {
       setIsLoggingOut(false);
     }
@@ -31,16 +41,22 @@ function Header() {
         </span>
       </h1>
       {user && (
-        <LoadingButton
-          onClick={handleLogout}
-          loading={isLoggingOut}
-          className="logout-button"
-        >
-          Logout
-        </LoadingButton>
+        <>
+          <LoadingButton
+            onClick={handleLogout}
+            loading={isLoggingOut}
+            className="logout-button"
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Logging out..." : "Logout"}
+          </LoadingButton>
+          {error && (
+            <span className="error-message" role="alert">
+              {error}
+            </span>
+          )}
+        </>
       )}
     </header>
   );
-}
-
-export default Header;
+};
