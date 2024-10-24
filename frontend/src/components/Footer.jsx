@@ -1,19 +1,37 @@
+/**
+ * Footer Component
+ * Displays a fixed footer with social links and copyright information
+ * @component
+ * @version 1.0.0
+ */
+
 import React from "react";
-import { 
+
+// Material-UI Icons for social links and copyright
+import {
   LinkedIn as LinkedInIcon,
   GitHub as GitHubIcon,
   Email as EmailIcon,
   Copyright as CopyrightIcon,
-  Language as WebsiteIcon  // Added for portfolio link
+  Language as WebsiteIcon
 } from '@mui/icons-material';
 
-function Footer() {
-  const currentYear = new Date().getFullYear();
+const Footer = () => {
+  // ============================================================================
+  // CONSTANTS AND CONFIGURATIONS
+  // ============================================================================
   
+  // Get current year for copyright notice
+  const currentYear = new Date().getFullYear();
+
+  /**
+   * Configuration for social media links and contact information
+   * Each object contains icon, URL, and label for accessibility
+   */
   const socialLinks = [
     {
       icon: <WebsiteIcon fontSize="small" />,
-      url: "https://yardenitzhaky.github.io/Portfolio/",  // Your portfolio URL
+      url: "https://yardenitzhaky.github.io/Portfolio/",
       label: "Portfolio"
     },
     {
@@ -33,9 +51,14 @@ function Footer() {
     }
   ];
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+  
   return (
     <footer>
       <div className="footer-content">
+        {/* Social Links Section */}
         <div className="social-links">
           {socialLinks.map((link, index) => (
             <a
@@ -45,12 +68,14 @@ function Footer() {
               rel="noopener noreferrer"
               aria-label={link.label}
               className="social-icon"
-              title={link.label}  // Added tooltip
+              title={link.label}
             >
               {link.icon}
             </a>
           ))}
         </div>
+
+        {/* Copyright Section */}
         <p className="copyright">
           <CopyrightIcon fontSize="small" />
           <span>{currentYear}</span>
@@ -60,6 +85,8 @@ function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+// PropTypes could be added here if component accepts props in the future
 
 export default Footer;
