@@ -1,60 +1,136 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import PropTypes from 'prop-types';
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from '@mui/material/CircularProgress';
+import Tooltip from '@mui/material/Tooltip';
 
-
-const API_URL = 'https://keeper-backend-kgj9.onrender.com';
-
-
-function Note(props) {
+/**
+ * Note Component
+ * Displays a single note with title, content, and action buttons
+ * Supports edit and delete functionality with loading states
+ */
+const Note = ({ id, title, content, onDelete, onEdit }) => {
+  // ============================================================================
+  // STATE MANAGEMENT
+  // ============================================================================
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState(null);
 
-  async function handleDeleteClick() {
-    setIsDeleting(true);
-    try {
-      await props.onDelete(props.id);
-    } catch (error) {
-      console.error("Error deleting note:", error);
-    } finally {
-      setIsDeleting(false);
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  
+  const handleDeleteClick = async () => {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      setIsDeleting(true);
+      setError(null);
+      
+      try {
+        await onDelete(id);
+      } catch (error) {
+        console.error("Error deleting note:", error);
+        setError("Failed to delete note");
+      } finally {
+        setIsDeleting(false);
+      }
     }
-  }
+  };
 
-  async function handleEditClick() {
+  const handleEditClick = async () => {
     setIsEditing(true);
+    setError(null);
+    
     try {
-      await props.onEdit(props.id, props.title, props.content);
+      await onEdit(id, title, content);
     } catch (error) {
       console.error("Error editing note:", error);
+      setError("Failed to edit note");
     } finally {
       setIsEditing(false);
     }
-  }
+  };
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+  
   return (
-    <div className="note">
-      <h1>{props.title}</h1>
-      <p>{props.content}</p>
+    <div className="note" role="article">
+      {/* Note Content */}
+      <h1>{title}</h1>
+      <p>{content}</p>
+
+      {/* Error Message */}
+      {error && (
+        <div 
+          role="alert" 
+          style={{ 
+            color: '#e53e3e', 
+            fontSize: '0.875rem', 
+            marginBottom: '8px' 
+          }}
+        >
+          {error}
+        </div>
+      )}
+
+      {/* Action Buttons */}
       <div className="note-buttons">
-        <button onClick={handleEditClick} disabled={isEditing || isDeleting}>
-          {isEditing ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            <EditIcon />
-          )}
-        </button>
-        <button onClick={handleDeleteClick} disabled={isEditing || isDeleting}>
-          {isDeleting ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            <DeleteIcon />
-          )}
-        </button>
+        <Tooltip title="Edit note" placement="top">
+          <button
+            onClick={handleEditClick}
+            disabled={isEditing || isDeleting}
+            aria-label="Edit note"
+          >
+            {isEditing ? (
+              <CircularProgress 
+                size={24} 
+                color="inherit" 
+                aria-label="Editing..." 
+              />
+            ) : (
+              <EditIcon aria-hidden="true" />
+            )}
+          </button>
+        </Tooltip>
+
+        <Tooltip title="Delete note" placement="top">
+          <button
+            onClick={handleDeleteClick}
+            disabled={isEditing || isDeleting}
+            aria-label="Delete note"
+          >
+            {isDeleting ? (
+              <CircularProgress 
+                size={24} 
+                color="inherit" 
+                aria-label="Deleting..." 
+              />
+            ) : (
+              <DeleteIcon aria-hidden="true" />
+            )}
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
-}
+};
+
+// ============================================================================
+// PROP TYPES
+// ============================================================================
+
+Note.propTypes = {
+  id: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]).isRequired,
+  title: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired
+};
 
 export default Note;
