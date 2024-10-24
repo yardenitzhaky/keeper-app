@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import isStrongPassword from './Register';
 
 axios.defaults.withCredentials = true;
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
@@ -18,6 +19,14 @@ function ResetPassword() {
     e.preventDefault();
     setErrors({});
     setIsLoading(true);
+
+    if (!isStrongPassword(password)) {
+      setErrors({
+        password: "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
+      });
+      setIsLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setErrors({ confirmPassword: "Passwords do not match" });
