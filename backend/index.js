@@ -260,59 +260,216 @@ app.use((req, res, next) => {
 // Export necessary objects for use in other files
 export { app, db };
 
+// const transporter = nodemailer.createTransport({
+//   service: 'Gmail', // or any other email service
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
+
+// transporter.verify((error, success) => {
+//   if (error) {
+//     console.error('Error configuring Nodemailer transporter:', error);
+//   } else {
+//     console.log('Nodemailer transporter is ready to send emails');
+//   }
+// });
+
+// //Passport Local Strategy
+
+// passport.use("local", 
+//   new LocalStrategy({
+//     usernameField: 'identifier', 
+//     passwordField: 'password',
+//   },
+//   async (identifier, password, done) => {
+//     try {
+
+//       const lowercaseIdentifier = identifier.toLowerCase();
+
+//       const result = await db.query(
+//         'SELECT * FROM users WHERE (LOWER(username) = $1 OR LOWER(email) = $1) AND status = $2',
+//         [lowercaseIdentifier, 'active']
+//       );
+//       const user = result.rows[0];
+
+//       if (!user) {
+//         console.log('No user found with identifier:', identifier);
+//         return done(null, false, { message: 'Incorrect username or email.' });
+//       }
+
+//       const isMatch = await bcrypt.compare(password, user.password);
+//       if (!isMatch) {
+//         console.log('Password mismatch for user:', identifier);
+//         return done(null, false, { message: 'Incorrect password.' });
+//       }
+//       console.log('User authenticated successfully:', user.id);
+//       return done(null, user);
+//     } catch (err) {
+//       console.error('Error in LocalStrategy:', err);
+//       return done(err);
+//     }
+//   })
+// );
+
+// passport.use("google", new GoogleStrategy({
+//   clientID: process.env.GOOGLE_CLIENT_ID,
+//   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//   callbackURL: process.env.GOOGLE_CALLBACK_URL,
+//   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+//   passReqToCallback: true
+// },
+// async (request, accessToken, refreshToken, profile, done) => {
+//   try {
+//     console.log('Google profile:', profile); // Debug log to see profile structure
+
+//     // Extract email from Google profile
+//     const userEmail = profile.email || profile.emails[0].value;
+    
+//     // First check if user exists by Google ID
+//     const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
+//     let user = result.rows[0];
+
+//     if (!user) {
+//       // Check if user exists with this email
+//       const emailCheck = await db.query('SELECT * FROM users WHERE email = $1', [userEmail]);
+      
+//       if (emailCheck.rows.length > 0) {
+//         // Update existing user with Google ID
+//         const updateResult = await db.query(
+//           'UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *',
+//           [profile.id, userEmail]
+//         );
+//         user = updateResult.rows[0];
+//       } else {
+//         // Create new user with Google profile info
+//         const insertResult = await db.query(
+//           'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+//           [
+//             profile.id,
+//             profile.displayName,
+//             profile.id, // Using Google ID as password
+//             userEmail,
+//             "active"
+//           ]
+//         );
+//         user = insertResult.rows[0];
+//       }
+//     } else if (user.status !== 'active') {
+//       // Update status if needed
+//       const updateResult = await db.query(
+//         'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
+//         ['active', user.id]
+//       );
+//       user = updateResult.rows[0];
+//     }
+
+//     console.log('Authenticated user:', user); // Debug log
+//     return done(null, user);
+//   } catch (err) {
+//     console.error('Google authentication error:', err);
+//     return done(err, null);
+//   }
+// }
+// ));
+
+
+// passport.serializeUser((user, done) => {
+//   console.log('Serializing user:', user.id);
+//   done(null, user.id);
+// });
+
+// passport.deserializeUser(async (id, done) => {
+//   console.log('Deserializing user with id:', id);
+//   try {
+//     const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+//     if (result.rows.length === 0) {
+//       console.log('No user found with id:', id);
+//       return done(null, false);
+//     }
+//     console.log('Deserialized user:', result.rows[0]);
+//     done(null, result.rows[0]);
+//   } catch (err) {
+//     console.error('Error in deserializeUser:', err);
+//     done(err);
+//   }
+// });
+
+// ============================================================================
+// EMAIL CONFIGURATION
+// ============================================================================
+
+/**
+ * Configure NodeMailer transporter for sending emails
+ * Uses Gmail SMTP server with environment variables for credentials
+ */
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', // or any other email service
+  service: 'Gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
   },
 });
 
+// Verify email transport configuration
 transporter.verify((error, success) => {
   if (error) {
-    console.error('Error configuring Nodemailer transporter:', error);
+      console.error('Error configuring Nodemailer transporter:', error);
   } else {
-    console.log('Nodemailer transporter is ready to send emails');
+      console.log('Nodemailer transporter is ready to send emails');
   }
 });
 
-//Passport Local Strategy
+// ============================================================================
+// PASSPORT AUTHENTICATION STRATEGIES
+// ============================================================================
 
-passport.use("local", 
-  new LocalStrategy({
-    usernameField: 'identifier', 
-    passwordField: 'password',
-  },
-  async (identifier, password, done) => {
-    try {
-
+/**
+* Local Authentication Strategy
+* Allows users to login with either username or email
+*/
+passport.use("local", new LocalStrategy({
+  usernameField: 'identifier',    // Field name for username/email
+  passwordField: 'password',      // Field name for password
+},
+async (identifier, password, done) => {
+  try {
+      // Convert identifier to lowercase for case-insensitive comparison
       const lowercaseIdentifier = identifier.toLowerCase();
 
+      // Query database for user with matching username or email
       const result = await db.query(
-        'SELECT * FROM users WHERE (LOWER(username) = $1 OR LOWER(email) = $1) AND status = $2',
-        [lowercaseIdentifier, 'active']
+          'SELECT * FROM users WHERE (LOWER(username) = $1 OR LOWER(email) = $1) AND status = $2',
+          [lowercaseIdentifier, 'active']
       );
       const user = result.rows[0];
 
+      // Handle case when no user is found
       if (!user) {
-        console.log('No user found with identifier:', identifier);
-        return done(null, false, { message: 'Incorrect username or email.' });
+          console.log('No user found with identifier:', identifier);
+          return done(null, false, { message: 'Incorrect username or email.' });
       }
 
+      // Verify password
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        console.log('Password mismatch for user:', identifier);
-        return done(null, false, { message: 'Incorrect password.' });
+          console.log('Password mismatch for user:', identifier);
+          return done(null, false, { message: 'Incorrect password.' });
       }
+
       console.log('User authenticated successfully:', user.id);
       return done(null, user);
-    } catch (err) {
+  } catch (err) {
       console.error('Error in LocalStrategy:', err);
       return done(err);
-    }
-  })
-);
+  }
+}));
 
+/**
+* Google OAuth2 Authentication Strategy
+* Handles user authentication through Google
+*/
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -322,80 +479,89 @@ passport.use("google", new GoogleStrategy({
 },
 async (request, accessToken, refreshToken, profile, done) => {
   try {
-    console.log('Google profile:', profile); // Debug log to see profile structure
+      console.log('Google profile:', profile);
 
-    // Extract email from Google profile
-    const userEmail = profile.email || profile.emails[0].value;
-    
-    // First check if user exists by Google ID
-    const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
-    let user = result.rows[0];
-
-    if (!user) {
-      // Check if user exists with this email
-      const emailCheck = await db.query('SELECT * FROM users WHERE email = $1', [userEmail]);
+      // Extract email from Google profile
+      const userEmail = profile.email || profile.emails[0].value;
       
-      if (emailCheck.rows.length > 0) {
-        // Update existing user with Google ID
-        const updateResult = await db.query(
-          'UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *',
-          [profile.id, userEmail]
-        );
-        user = updateResult.rows[0];
-      } else {
-        // Create new user with Google profile info
-        const insertResult = await db.query(
-          'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [
-            profile.id,
-            profile.displayName,
-            profile.id, // Using Google ID as password
-            userEmail,
-            "active"
-          ]
-        );
-        user = insertResult.rows[0];
+      // Check if user exists by Google ID
+      const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
+      let user = result.rows[0];
+
+      if (!user) {
+          // Check if user exists with the email
+          const emailCheck = await db.query('SELECT * FROM users WHERE email = $1', [userEmail]);
+          
+          if (emailCheck.rows.length > 0) {
+              // Link existing account with Google
+              const updateResult = await db.query(
+                  'UPDATE users SET google_id = $1 WHERE email = $2 RETURNING *',
+                  [profile.id, userEmail]
+              );
+              user = updateResult.rows[0];
+          } else {
+              // Create new user with Google profile
+              const insertResult = await db.query(
+                  'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                  [
+                      profile.id,
+                      profile.displayName,
+                      profile.id,  // Using Google ID as password
+                      userEmail,
+                      "active"
+                  ]
+              );
+              user = insertResult.rows[0];
+          }
+      } else if (user.status !== 'active') {
+          // Activate user if needed
+          const updateResult = await db.query(
+              'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
+              ['active', user.id]
+          );
+          user = updateResult.rows[0];
       }
-    } else if (user.status !== 'active') {
-      // Update status if needed
-      const updateResult = await db.query(
-        'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
-        ['active', user.id]
-      );
-      user = updateResult.rows[0];
-    }
 
-    console.log('Authenticated user:', user); // Debug log
-    return done(null, user);
+      console.log('Authenticated user:', user);
+      return done(null, user);
   } catch (err) {
-    console.error('Google authentication error:', err);
-    return done(err, null);
+      console.error('Google authentication error:', err);
+      return done(err, null);
   }
-}
-));
+}));
 
+// ============================================================================
+// PASSPORT SESSION SERIALIZATION
+// ============================================================================
 
+/**
+* Serialize user object to store in session
+* Only stores user ID in the session
+*/
 passport.serializeUser((user, done) => {
   console.log('Serializing user:', user.id);
   done(null, user.id);
 });
 
+/**
+* Deserialize user from session
+* Retrieves full user object from database using stored ID
+*/
 passport.deserializeUser(async (id, done) => {
   console.log('Deserializing user with id:', id);
   try {
-    const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
-      console.log('No user found with id:', id);
-      return done(null, false);
-    }
-    console.log('Deserialized user:', result.rows[0]);
-    done(null, result.rows[0]);
+      const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+      if (result.rows.length === 0) {
+          console.log('No user found with id:', id);
+          return done(null, false);
+      }
+      console.log('Deserialized user:', result.rows[0]);
+      done(null, result.rows[0]);
   } catch (err) {
-    console.error('Error in deserializeUser:', err);
-    done(err);
+      console.error('Error in deserializeUser:', err);
+      done(err);
   }
 });
-
 //POST ROUTES.
 
 app.post('/register', async (req, res) => {
