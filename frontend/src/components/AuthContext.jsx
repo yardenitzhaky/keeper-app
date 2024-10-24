@@ -145,40 +145,22 @@ export function AuthProvider({ children }) {
         }
     };
 
-/**
- * Enhanced logout function that cleans up all auth state
- * Removes cookies, sessions, and local state
- */
-const logout = async () => {
-    try {
-      // Call server logout endpoint
-      await axios.post(
-        `${API_URL}/logout`,
-        {},
-        { withCredentials: true }
-      );
-  
-      // Clear all authentication cookies
-      document.cookie.split(";").forEach((cookie) => {
-        document.cookie = cookie
-          .replace(/^ +/, "")
-          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
-      });
-  
-      // Clear user state
-      setUser(null);
-  
-      // Clear any stored auth data
-      localStorage.removeItem('cookieAlertAcknowledged');
-      sessionStorage.clear();
-  
-      // Force reload to clear any remaining state (optional)
-      // window.location.reload();
-    } catch (error) {
-      console.error("Logout failed:", error.response?.data || error.message);
-      throw error; // Propagate error for handling in components
-    }
-  };
+    /**
+     * Handles user logout
+     * Clears user session and local state
+     */
+    const logout = async () => {
+        try {
+            await axios.post(
+                `${API_URL}/logout`, 
+                {}, 
+                { withCredentials: true }
+            );
+            setUser(null);
+        } catch (error) {
+            console.error("Logout failed:", error.response?.data || error.message);
+        }
+    };
 
     /**
      * Handles successful Google OAuth authentication

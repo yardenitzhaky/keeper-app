@@ -18,16 +18,14 @@ const Header = () => {
   /**
    * Handles the logout process
    */
+
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    setError(null);
-
     try {
       await logout();
-      navigate("/login", { replace: true });
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      setError("Logout failed. Please try again.");
     } finally {
       setIsLoggingOut(false);
     }
