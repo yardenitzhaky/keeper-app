@@ -395,14 +395,14 @@ function Login() {
       </form>
 
       {/* Google Sign In */}
-      <button 
+      <LoadingButton 
         onClick={handleGoogleSignIn} 
         className="social-login-button"
         aria-label="Sign in with Google"
       >
         <img src="/images/google_logo.png" alt="" aria-hidden="true" />
         <span>Sign in with Google</span>
-      </button>
+      </LoadingButton>
 
       {/* Links */}
       <div className="auth-links">
