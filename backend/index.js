@@ -1,109 +1,264 @@
+// import express from "express";
+// import bodyParser from "body-parser";
+// import pg from "pg";
+// import cors from 'cors';
+// import bcrypt from 'bcrypt';
+// import LocalStrategy from 'passport-local';
+// import session from 'express-session';
+// import pgSession from 'connect-pg-simple';
+// import passport from 'passport';
+// import GoogleStrategy  from 'passport-google-oauth2';
+// import validator from 'validator';
+// import crypto from 'crypto';
+// import nodemailer from 'nodemailer';
+// import dotenv from 'dotenv';
+// import exp from "constants";
+// import cookieParser from 'cookie-parser';
+
+// const app = express();
+
+// // CORS configuration
+// const corsOptions = {
+//   origin: 'https://keeper-frontend-36zj.onrender.com',
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// };
+
+// app.use(cors(corsOptions));
+// app.use(cookieParser());
+
+// // Set custom headers for all responses
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   next();
+// });
+
+// if (process.env.NODE_ENV !== 'production') {
+//   console.log('Loading development environment');
+//   dotenv.config();
+// }
+// const port = process.env.PORT || 10000;
+// const isProduction = process.env.NODE_ENV === 'production';
+
+
+// const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
+// const db = new pg.Pool({
+//   connectionString: connectionString,
+//   ssl: { rejectUnauthorized: false }
+// });
+
+
+
+// db.connect()
+//   .then(() => console.log('Connected to the database'))
+//   .catch(err => console.error('Error connecting to the database:', err));
+
+// app.use(bodyParser.json());
+// app.use(express.json());
+
+// const allowedOrigins = [
+//   'https://keeper-frontend-36zj.onrender.com',
+//   'https://keeper-backend-kgj9.onrender.com',
+//   'http://localhost:5173',
+//   'https://localhost:5173'
+//   // Add any other origins you need, including local development URLs
+// ];
+
+// const PgSession = pgSession(session);
+
+// app.set('trust proxy', 1); // trust first proxy
+
+
+
+
+// app.use(
+//   session({
+//     store: new PgSession({
+//       pool: db,
+//       tableName: 'session',
+//     }),
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       maxAge: 30 * 24 * 60 * 60 * 1000,
+//       secure: isProduction,
+//       httpOnly: true,
+//       sameSite: 'none',
+//       domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
+//     },
+//     name: 'keeper.sid',
+//   })
+// );
+
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+
+// app.use((req, res, next) => {
+//   console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
+//   console.log('Session:', JSON.stringify(req.session, null, 2));
+//   console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+//   console.log('Is Authenticated:', req.isAuthenticated());
+//   next();
+// });
+
+// ============================================================================
+// IMPORTS AND DEPENDENCIES
+// ============================================================================
+
+// Core Express and middleware imports
 import express from "express";
 import bodyParser from "body-parser";
-import pg from "pg";
 import cors from 'cors';
-import bcrypt from 'bcrypt';
-import LocalStrategy from 'passport-local';
+import cookieParser from 'cookie-parser';
+
+// Database and session management
+import pg from "pg";
 import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import passport from 'passport';
-import GoogleStrategy  from 'passport-google-oauth2';
+
+// Authentication strategies
+import LocalStrategy from 'passport-local';
+import GoogleStrategy from 'passport-google-oauth2';
+import bcrypt from 'bcrypt';
+
+// Utility imports
 import validator from 'validator';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import exp from "constants";
-import cookieParser from 'cookie-parser';
 
+// Initialize Express application
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: 'https://keeper-frontend-36zj.onrender.com',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+// ============================================================================
+// ENVIRONMENT CONFIGURATION
+// ============================================================================
 
-app.use(cors(corsOptions));
-app.use(cookieParser());
-
-// Set custom headers for all responses
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
-
+// Load environment variables in development
 if (process.env.NODE_ENV !== 'production') {
-  console.log('Loading development environment');
-  dotenv.config();
+    console.log('Loading development environment');
+    dotenv.config();
 }
+
+// Environment constants
 const port = process.env.PORT || 10000;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// ============================================================================
+// CORS CONFIGURATION
+// ============================================================================
 
-const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
-const db = new pg.Pool({
-  connectionString: connectionString,
-  ssl: { rejectUnauthorized: false }
+const corsOptions = {
+    // Specify allowed origin for cross-origin requests
+    origin: 'https://keeper-frontend-36zj.onrender.com',
+    credentials: true,
+    // Allowed HTTP methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    // Allowed headers in requests
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Set custom headers for all responses
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
 });
 
+// ============================================================================
+// DATABASE CONFIGURATION
+// ============================================================================
 
+// Construct database connection string
+const connectionString = process.env.DATABASE_URL || 
+    `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
 
+// Create database pool
+const db = new pg.Pool({
+    connectionString: connectionString,
+    ssl: { rejectUnauthorized: false }  // Required for Heroku/render.com
+});
+
+// Establish database connection
 db.connect()
-  .then(() => console.log('Connected to the database'))
-  .catch(err => console.error('Error connecting to the database:', err));
+    .then(() => console.log('Connected to the database'))
+    .catch(err => console.error('Error connecting to the database:', err));
 
+// ============================================================================
+// MIDDLEWARE SETUP
+// ============================================================================
+
+// Body parsing middleware
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-const allowedOrigins = [
-  'https://keeper-frontend-36zj.onrender.com',
-  'https://keeper-backend-kgj9.onrender.com',
-  'http://localhost:5173',
-  'https://localhost:5173'
-  // Add any other origins you need, including local development URLs
-];
+// Trust first proxy in production
+app.set('trust proxy', 1);
+
+// ============================================================================
+// SESSION CONFIGURATION
+// ============================================================================
 
 const PgSession = pgSession(session);
 
-app.set('trust proxy', 1); // trust first proxy
-
-
-
-
+// Configure session middleware
 app.use(
-  session({
-    store: new PgSession({
-      pool: db,
-      tableName: 'session',
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: isProduction,
-      httpOnly: true,
-      sameSite: 'none',
-      domain: process.env.NODE_ENV === 'production' ? 'keeper-backend-kgj9.onrender.com' : 'localhost',
-    },
-    name: 'keeper.sid',
-  })
+    session({
+        // Store sessions in PostgreSQL
+        store: new PgSession({
+            pool: db,
+            tableName: 'session',
+        }),
+        // Session configuration
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        // Cookie settings
+        cookie: {
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            secure: isProduction,              // Secure in production
+            httpOnly: true,                    // Prevent XSS
+            sameSite: 'none',                 // Required for cross-site cookies
+            domain: process.env.NODE_ENV === 'production' 
+                ? 'keeper-backend-kgj9.onrender.com' 
+                : 'localhost',
+        },
+        name: 'keeper.sid',  // Custom session cookie name
+    })
 );
 
+// ============================================================================
+// PASSPORT AUTHENTICATION SETUP
+// ============================================================================
+
+// Initialize Passport and restore authentication state from session
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: true }));
 
+// ============================================================================
+// DEBUGGING MIDDLEWARE
+// ============================================================================
 
+// Log request details for debugging
 app.use((req, res, next) => {
-  console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
-  console.log('Session:', JSON.stringify(req.session, null, 2));
-  console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
-  console.log('Is Authenticated:', req.isAuthenticated());
-  next();
+    console.log(`Request to ${req.path} - Session ID: ${req.sessionID}`);
+    console.log('Session:', JSON.stringify(req.session, null, 2));
+    console.log('User:', req.user ? JSON.stringify(req.user, null, 2) : 'No user');
+    console.log('Is Authenticated:', req.isAuthenticated());
+    next();
 });
+
+// Export necessary objects for use in other files
+export { app, db };
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail', // or any other email service
@@ -157,43 +312,6 @@ passport.use("local",
     }
   })
 );
-
-// passport.use("google", new GoogleStrategy({
-//   clientID: process.env.GOOGLE_CLIENT_ID,
-//   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//   callbackURL: process.env.GOOGLE_CALLBACK_URL,
-//   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-//   passReqToCallback: true
-// },
-// async (request, accessToken, refreshToken, profile, done) => {
-//   try {
-//     // Check if the user already exists in your database
-//     const result = await db.query('SELECT * FROM users WHERE google_id = $1', [profile.id]);
-//     let user = result.rows[0];
-
-//     if (!user) {
-//       // If user doesn't exist, create a new user in your database
-//       const insertResult = await db.query(
-//         'INSERT INTO users (google_id, username, password, email, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-//         [profile.id, profile.displayName, profile.id, "google email", "active"]
-//       );
-//       user = insertResult.rows[0];
-//     } else if (user.status !== 'active') {
-//       // If the user exists but their status is not active, update it to active
-//       const updateResult = await db.query(
-//         'UPDATE users SET status = $1 WHERE id = $2 RETURNING *',
-//         ['active', user.id]
-//       );
-//       user = updateResult.rows[0];
-//     }
-
-
-//     return done(null, user);  // Continue with the user object
-//   } catch (err) {
-//     return done(err, null);
-//   }
-// }
-// ));
 
 passport.use("google", new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
