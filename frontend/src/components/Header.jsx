@@ -1,3 +1,14 @@
+import React, { useContext, useState } from "react";
+import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
+import HighlightIcon from "@mui/icons-material/Highlight";
+import LoadingButton from "./LoadingButton";
+import LoadingSpinner from "./LoadingSpinner";
+
+/**
+ * Header Component
+ * Displays application header with logo and logout functionality
+ */
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -5,8 +16,7 @@ const Header = () => {
   const [error, setError] = useState(null);
 
   /**
-   * Handles complete logout process
-   * Cleans up all sessions, cookies, and state
+   * Handles the logout process
    */
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -14,19 +24,10 @@ const Header = () => {
 
     try {
       await logout();
-      
-      // Additional cleanup
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Redirect to login
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
       setError("Logout failed. Please try again.");
-      
-      // Optional: Show error message to user
-      // You could add a toast notification here
     } finally {
       setIsLoggingOut(false);
     }
@@ -60,3 +61,6 @@ const Header = () => {
     </header>
   );
 };
+
+// Make sure to export the component as default
+export default Header;
