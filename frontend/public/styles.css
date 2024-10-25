@@ -1,4 +1,7 @@
-/* Reset and Base Styles */
+/* -------------------- 
+   Reset and Base Styles
+-------------------- */
+
 * {
   padding: 0;
   margin: 0;
@@ -15,7 +18,10 @@ body {
   padding: 0 16px;
 }
 
-/* Header Styles */
+/* -------------------- 
+      Header Styles
+-------------------- */
+
 header {
   display: flex;
   align-items: center;
@@ -32,8 +38,6 @@ header h1 {
   display: flex;
   align-items: center;
 }
-
-
 
 .app-title {
   display: flex;
@@ -67,6 +71,10 @@ header h1 {
   background-color: #f5ba13;
   color: #fff;
 }
+
+/* -------------------- 
+      Footer Styles
+-------------------- */
 
 footer {
   position: fixed;
@@ -102,7 +110,7 @@ footer {
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  position: relative;  /* For tooltip positioning */
+  position: relative; /* For tooltip positioning */
 }
 
 .social-icon:hover {
@@ -154,37 +162,10 @@ footer {
   font-weight: 500;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-  .footer-content {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
+/* -------------------- 
+      Note Styles
+-------------------- */
 
-  footer {
-    height: 2rem;
-    padding: 0.5rem;
-  }
-
-  .copyright {
-    font-size: 0.8rem;
-  }
-
-  /* Hide tooltips on mobile */
-  .social-icon::after {
-    display: none;
-  }
-}
-
-/* Print styles */
-@media print {
-  footer {
-    position: static;
-    background: none;
-    border: none;
-  }
-}
-/* Note Styles */
 .note {
   position: relative;
   background: #fff;
@@ -201,7 +182,7 @@ footer {
 /* Hover effect for note */
 .note:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Note Title */
@@ -246,7 +227,10 @@ footer {
   font-size: 2.2em;
 }
 
-/* Create Note Form */
+/* -------------------- 
+  Create Note Form Styles
+-------------------- */
+
 form.create-note {
   position: relative;
   width: 480px;
@@ -283,17 +267,19 @@ form.create-note button {
   outline: none;
 }
 
-/* Auth Container for Login and Register */
+/* -------------------- 
+  Authentication Container Styles
+-------------------- */
+
 .auth-container {
   max-width: 400px;
   margin: 80px auto;
   padding: 40px;
   background-color: #fff;
   border-radius: 7px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   animation: fadeInUp 0.5s ease-out;
   margin-bottom: 3.5rem; /* Add margin to prevent footer overlap */
-
 }
 
 /* Heading */
@@ -304,8 +290,8 @@ form.create-note button {
 }
 
 /* Input Fields */
-.auth-container input[type="text"],
-.auth-container input[type="password"] {
+.auth-container input[type='text'],
+.auth-container input[type='password'] {
   width: 100%;
   padding: 12px 15px;
   margin: 8px 0;
@@ -315,8 +301,8 @@ form.create-note button {
 }
 
 /* Input Focus Effect */
-.auth-container input[type="text"]:focus,
-.auth-container input[type="password"]:focus {
+.auth-container input[type='text']:focus,
+.auth-container input[type='password']:focus {
   border-color: #f5ba13;
   box-shadow: 0 0 5px rgba(245, 186, 19, 0.5);
 }
@@ -330,7 +316,7 @@ form.create-note button {
 }
 
 /* Checkbox */
-.auth-container input[type="checkbox"] {
+.auth-container input[type='checkbox'] {
   margin-right: 10px;
 }
 
@@ -398,106 +384,9 @@ form.create-note button {
   max-width: 150px;
 }
 
-/* Animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Media query for small screens */
-@media (max-width: 600px) {
-
-  .notes-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 3rem;
-  }
-
-  header {
-    padding: 12px 16px;
-  }
-
-  header h1 {
-    font-size: 1.5em;
-  }
-
-  .logout-button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-
-  .note {
-    width: 90%;
-    margin: 16px auto;
-    float: none;
-    padding: 20px;
-    min-height: auto;
-  }
-
-  .note h1 {
-    font-size: 1.1em;
-    word-break: break-word;
-  }
-
-  .note p {
-    font-size: 0.9em;
-    word-break: break-word;
-  }
-
-  form.create-note {
-    width: 90%;
-    margin: 20px auto;
-  }
-
-  .auth-container {
-    margin: 40px auto;
-    padding: 30px 20px;
-  }
-
-  .note {
-    float: none !important;
-  }
-
-  /* Ensure buttons don't overflow */
-  .note .note-buttons {
-    position: relative;
-    bottom: auto;
-    right: auto;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
-  }
-
-} /* Closed media query */
-
-
-@media (min-width: 601px) {
-  .notes-container {
-    display: block; /* Reset the flex container for desktop */
-  }
-  
-  .note {
-    float: left; /* Keep the original floating behavior */
-    width: 400px;
-    margin: 16px;
-  }
-
-  .auth-container {
-    margin: 40px auto;
-    padding: 30px;
-  }
-
-  form.create-note {
-    width: 90%;
-  }
-}
+/* -------------------- 
+    Utility Styles 
+-------------------- */
 
 .error {
   color: #d8000c;
@@ -510,7 +399,10 @@ form.create-note button {
   font-weight: bold;
 }
 
-/* Loading Spinner Styles */
+/* -------------------- 
+   Loading Spinner Styles
+-------------------- */
+
 .loading-container {
   position: fixed;
   top: 0;
@@ -591,37 +483,9 @@ form.create-note button {
   line-height: 1.4;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* Disabled state styles for note buttons */
-.note button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Disabled state styles for create note form */
-.create-note input:disabled,
-.create-note textarea:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
-/* Loading button styles */
-.fab-progress {
-  color: #fff;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+/* -------------------- 
+   Cookie Alert Styles
+-------------------- */
 
 .cookie-alert-overlay {
   position: fixed;
@@ -748,18 +612,73 @@ form.create-note button {
   border-bottom-right-radius: 8px;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* -------------------- 
+      Media Queries
+-------------------- */
 
 @media (max-width: 600px) {
+  .notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 3rem;
+  }
+
+  header {
+    padding: 12px 16px;
+  }
+
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .note {
+    width: 90%;
+    margin: 16px auto;
+    float: none;
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .note h1 {
+    font-size: 1.1em;
+    word-break: break-word;
+  }
+
+  .note p {
+    font-size: 0.9em;
+    word-break: break-word;
+  }
+
+  form.create-note {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .auth-container {
+    margin: 40px auto;
+    padding: 30px 20px;
+  }
+
+  .note {
+    float: none !important;
+  }
+
+  /* Ensure buttons don't overflow */
+  .note .note-buttons {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+  }
+
   .cookie-alert-modal {
     margin: 10px;
     max-height: 85vh;
@@ -776,5 +695,108 @@ form.create-note button {
   .cookie-alert-footer {
     padding: 15px;
   }
+} /* Closed media query */
+
+@media (min-width: 601px) {
+  .notes-container {
+    display: block; /* Reset the flex container for desktop */
+  }
+
+  .note {
+    float: left; /* Keep the original floating behavior */
+    width: 400px;
+    margin: 16px;
+  }
+
+  .auth-container {
+    margin: 40px auto;
+    padding: 30px;
+  }
+
+  form.create-note {
+    width: 90%;
+  }
 }
 
+@media print {
+  footer {
+    position: static;
+    background: none;
+    border: none;
+  }
+}
+
+/* -------------------- 
+   Animations
+-------------------- */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -------------------- 
+   Disabled States 
+-------------------- */
+
+/* Disabled state styles for note buttons */
+.note button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Disabled state styles for create note form */
+.create-note input:disabled,
+.create-note textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Loading button styles */
+.fab-progress {
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
