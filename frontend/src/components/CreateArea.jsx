@@ -1,27 +1,47 @@
+/**
+ * CreateArea Component
+ * Handles the creation and editing of notes with an expandable form interface
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onAdd - Callback for adding a new note
+ * @param {Function} props.onUpdate - Callback for updating an existing note
+ * @param {Object} props.editNote - Note being edited (null if creating new note)
+ */
+
 import React, { useState, useEffect } from "react";
+
+// Material-UI Components
+import { Fab, Zoom } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DoneIcon from '@mui/icons-material/Done';
-import { Fab } from "@mui/material";
-import { Zoom } from "@mui/material";
-import axios from 'axios';
-axios.defaults.withCredentials = true;
-import LoadingButton from "./LoadingButton.jsx";
-import LoadingSpinner from "./LoadingSpinner.jsx";
 import CircularProgress from '@mui/material/CircularProgress';
 
+// Custom Components
+import LoadingButton from "./LoadingButton.jsx";
+import LoadingSpinner from "./LoadingSpinner.jsx";
 
+// HTTP Client
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 function CreateArea(props) {
-
+  // ============================================================================
+  // STATE MANAGEMENT
+  // ============================================================================
+  
   const [isExpanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [note, setNote] = useState({
     title: "",
     content: ""
   });
 
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
+  
+  // Handle edit mode when a note is passed for editing
   useEffect(() => {
     if (props.editNote) {
       setNote({
@@ -32,30 +52,44 @@ function CreateArea(props) {
     }
   }, [props.editNote]);
 
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+  
+  /**
+   * Handles input changes in the form fields
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} event
+   */
   function handleChange(event) {
     const { name, value } = event.target;
-
-    setNote(prevNote => {
-      return {
-        ...prevNote,
-        [name]: value
-      };
-    });
+    setNote(prevNote => ({
+      ...prevNote,
+      [name]: value
+    }));
   }
 
+  /**
+   * Handles form submission for both creating and editing notes
+   * @param {React.FormEvent} event
+   */
   async function submitNote(event) {
     event.preventDefault();
     setIsLoading(true);
+
     try {
       if (props.editNote) {
+        // Update existing note
         await props.onUpdate({
           id: props.editNote.id,
           title: note.title,
           content: note.content,
         });
       } else {
+        // Create new note
         await props.onAdd(note);
       }
+
+      // Reset form state
       setNote({
         title: "",
         content: ""
@@ -68,24 +102,31 @@ function CreateArea(props) {
     }
   }
 
-  
-  
-  
-
+  /**
+   * Expands the form to show title input
+   */
   function expand() {
     setExpanded(true);
   }
-  
 
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+  
   return (
     <div>
       <form className="create-note">
-        {isExpanded ? <input
-          name="title"
-          onChange={handleChange}
-          value={note.title}
-          placeholder="Title"
-        /> : null}
+        {/* Title input - only shown when form is expanded */}
+        {isExpanded && (
+          <input
+            name="title"
+            onChange={handleChange}
+            value={note.title}
+            placeholder="Title"
+          />
+        )}
+
+        {/* Note content textarea */}
         <textarea
           onClick={expand}
           name="content"
@@ -94,14 +135,16 @@ function CreateArea(props) {
           placeholder="Take a note..."
           rows={isExpanded ? 3 : 1}
         />
+
+        {/* Submit button with loading state */}
         <Zoom in={isExpanded}>
-        <Fab onClick={submitNote} disabled={isLoading}>
+          <Fab onClick={submitNote} disabled={isLoading}>
             {isLoading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
               props.editNote ? <DoneIcon /> : <AddIcon />
             )}
-        </Fab>
+          </Fab>
         </Zoom>
       </form>
     </div>
