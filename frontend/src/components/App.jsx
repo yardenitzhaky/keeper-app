@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
-import CreateArea, {setNote} from "./CreateArea";
+import CreateArea from "./CreateArea";
 import Login from "./Login";
 import Register from "./Register";
 import ForgotPassword from "./ForgotPassword";
@@ -69,10 +69,6 @@ function App() {
   async function deleteNote(id) {
     try {
       await axios.delete(`${API_URL}/notes/${id}`, {withCredentials: true,} );
-      setNote({
-        title: "",
-        content: ""
-      });
       setNotes(prevNotes => {
         return prevNotes.filter((noteItem) => noteItem.id !== id);
       });
