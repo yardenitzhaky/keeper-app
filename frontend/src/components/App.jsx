@@ -69,6 +69,9 @@ function App() {
   async function deleteNote(id) {
     try {
       await axios.delete(`${API_URL}/notes/${id}`, {withCredentials: true,} );
+      if (editNote && editNote.id === id) {
+        setEditNote(null);
+      }
       setNotes(prevNotes => {
         return prevNotes.filter((noteItem) => noteItem.id !== id);
       });
