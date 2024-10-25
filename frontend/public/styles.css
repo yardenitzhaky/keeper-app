@@ -46,7 +46,7 @@ header h1 {
 }
 
 .app-title:hover {
-  color: #ffdd80; /* Change this color to your desired hover color */
+  color: #ffdd80;
 }
 
 /* Adjust the icon margin */
@@ -799,4 +799,39 @@ form.create-note button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.user-avatar {
+  background-color: #f5ba13;
+  color: white;
+}
+
+.username {
+  font-weight: 500;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .username {
+    display: none;
+  }
 }
