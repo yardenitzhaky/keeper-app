@@ -199,7 +199,7 @@ function CreateArea(props) {
               }}
             >
               <InfoIcon sx={{ fontSize: 16, mr: 0.5 }} />
-              AI will auto-detect the category if none selected
+              AI will try to auto-detect the category if none selected
             </Typography>
           </div>
         )}

@@ -64,8 +64,11 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
 
   const handleCategoryChange = async (newCategory) => {
     try {
-      await axios.put(`/notes/${id}/category`, { category: newCategory });
-      onEdit(id, title, content, newCategory);
+      const response = await axios.put(
+        `${API_URL}/notes/${id}`,
+        { withCredentials: true }
+      );
+      onEdit(id, title, content, response.data.category);
     } catch (error) {
       console.error("Failed to update category:", error);
       setError("Failed to update category");
