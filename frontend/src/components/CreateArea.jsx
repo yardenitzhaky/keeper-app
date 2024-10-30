@@ -89,28 +89,42 @@ function CreateArea(props) {
   async function submitNote(event) {
     event.preventDefault();
     setIsLoading(true);
-
+  
     try {
-
-         // Get category prediction
-    const categoryResponse = await axios.post('/classify-text', {
-      text: note.content
-    });
-    
-    const noteWithCategory = {
-      ...note,
-      category: categoryResponse.data.category
-    };
-    if (props.editNote) {
-      await props.onUpdate(noteWithCategory);
-    } else {
-      await props.onAdd(noteWithCategory);
-    }
-
+      // If a category is manually selected, use it. Otherwise, get prediction
+      let noteCategory = note.category;
+      
+      if (!noteCategory) {
+        try {
+          const response = await axios.post('/classify-text', {
+            text: note.content
+          });
+          noteCategory = response.data.category;
+        } catch (error) {
+          console.error("Classification error:", error);
+          noteCategory = "Uncategorized";
+        }
+      }
+  
+      const noteWithCategory = {
+        ...note,
+        category: noteCategory
+      };
+  
+      if (props.editNote) {
+        await props.onUpdate({
+          ...props.editNote,
+          ...noteWithCategory
+        });
+      } else {
+        await props.onAdd(noteWithCategory);
+      }
+  
       // Reset form state
       setNote({
         title: "",
-        content: ""
+        content: "",
+        category: ""
       });
       setExpanded(false);
     } catch (error) {

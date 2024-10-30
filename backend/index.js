@@ -618,26 +618,22 @@ app.post('/add', async (req, res) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const { title, content } = req.body;
-  let category = 'Uncategorized';
+  const { title, content, category } = req.body;
 
   try {
 
-    try {
-      category = await classifyText(content);
-    } catch (classifyError) {
-      console.error('Classification failed:', classifyError);
-    }
-
+    const noteCategory = category || await classifyText(content);
+    console.log('Classified category:', noteCategory);
 
     const result = await db.query(
       'INSERT INTO notes (title, content, category, user_id) VALUES ($1, $2, $3, $4) RETURNING *;',
       [title, content, category, req.user.id]
     );
+    console.log('Note added:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error('Database error', err);
-    res.status(500).send('Server error');
+    console.error('Error creating note:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
@@ -796,11 +792,19 @@ app.put("/notes/:id", async (req, res) => {
 app.put('/notes/:id/category', async (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
 
+  const { id } = req.params;
+  const { category } = req.body;
+
   try {
     const result = await db.query(
       'UPDATE notes SET category = $1 WHERE id = $2 AND user_id = $3 RETURNING *;',
-      [req.body.category, req.params.id, req.user.id]
+      [category, id, req.user.id]
     );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Note not found or unauthorized' });
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

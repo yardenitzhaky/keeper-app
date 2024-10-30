@@ -7,6 +7,8 @@ import Tooltip from '@mui/material/Tooltip';
 import CategoryIcon from "@mui/icons-material/Category";
 import Chip from '@mui/material/Chip';
 import { Menu, MenuItem } from '@mui/material';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 
 
