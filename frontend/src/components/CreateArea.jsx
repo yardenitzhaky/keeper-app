@@ -28,6 +28,8 @@ import LoadingSpinner from "./LoadingSpinner.jsx";
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
 function CreateArea(props) {
   // ============================================================================
   // STATE MANAGEMENT
@@ -99,6 +101,7 @@ function CreateArea(props) {
           const response = await axios.post('/classify-text', {
             text: note.content
           });
+          console.log("Classification response:", response.data);
           noteCategory = response.data.category;
         } catch (error) {
           console.error("Classification error:", error);

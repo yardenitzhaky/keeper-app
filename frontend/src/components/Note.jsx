@@ -10,9 +10,7 @@ import { Menu, MenuItem } from '@mui/material';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
-
-
-
+const API_URL = 'https://keeper-backend-kgj9.onrender.com';
 /**
  * Note Component
  * Displays a single note with title, content, and action buttons
