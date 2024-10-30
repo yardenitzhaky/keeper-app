@@ -27,6 +27,8 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(category);
+
 
 
   // ============================================================================
@@ -63,19 +65,17 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
     }
   };
 
-const handleCategoryChange = async (newCategory) => {
-  try {
-    const response = await axios.put(
-      `${API_URL}/notes/${id}/category`,
-      { category: newCategory },
-      { withCredentials: true }
-    );
-    onEdit(id, title, content, response.data.category);
-  } catch (error) {
-    console.error("Failed to update category:", error);
-    setError("Failed to update category");
-  }
-};
+  const handleCategoryChange = async (event) => {
+    const newCategory = event.target.value;
+    setSelectedCategory(newCategory);
+
+    try {
+      await axios.put(`${API_URL}/notes/${id}/category`, { category: newCategory }, { withCredentials: true });
+      onEdit(id, title, content, newCategory);
+    } catch (error) {
+      console.error("Failed to update category:", error);
+    }
+  };
 
   const categoryColors = {
     'Politics': '#FF6B6B',
@@ -98,46 +98,19 @@ const handleCategoryChange = async (newCategory) => {
     <div className="note" role="article">
       {/* Category Chip */}
       <div className="note-category">
-        <Tooltip title="Click to change category">
-          <Chip
-            icon={<CategoryIcon />}
-            label={category || 'Uncategorized'}
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            size="small"
-            sx={{
-              backgroundColor: categoryColors[category] || categoryColors.Uncategorized,
-              color: category === 'Entertainment' ? 'black' : 'white',
-              fontWeight: 500,
-              marginBottom: '8px',
-              cursor: 'pointer',
-              '&:hover': {
-                opacity: 0.9
-              }
-            }}
-          />
-        </Tooltip>
-
-        {/* Category Selection Menu */}
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-        >
-          {["Politics", "Sport", "Technology", "Entertainment", "Business", "Uncategorized"].map((cat) => (
-            <MenuItem 
-              key={cat}
-              onClick={() => {
-                handleCategoryChange(cat);
-                setAnchorEl(null);
-              }}
-              selected={cat === category}
-            >
-              <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
-              {cat}
-            </MenuItem>
-          ))}
-        </Menu>
-      </div>
+      <select 
+        value={selectedCategory} 
+        onChange={handleCategoryChange}
+        className="category-select"
+      >
+        <option value="Uncategorized">Uncategorized</option>
+        <option value="Politics">Politics</option>
+        <option value="Sport">Sport</option>
+        <option value="Technology">Technology</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Business">Business</option>
+      </select>
+    </div>
 
       {/* Note Content */}
       <h1>{title}</h1>

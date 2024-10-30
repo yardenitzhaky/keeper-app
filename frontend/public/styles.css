@@ -889,3 +889,34 @@ form.create-note button {
 .MuiChip-root {
   cursor: pointer !important;
 }
+
+.note-category {
+  margin-bottom: 10px;
+}
+
+.category-select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath fill='%23333' d='M6 6L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+}
+
+.category-select:focus {
+  outline: none;
+  border-color: #f5ba13;
+  box-shadow: 0 0 0 2px rgba(245, 186, 19, 0.2);
+}
+
+.category-select option {
+  background-color: white;
+  color: #333;
+}

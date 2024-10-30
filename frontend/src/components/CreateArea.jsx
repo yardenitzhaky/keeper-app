@@ -99,7 +99,8 @@ function CreateArea(props) {
       if (!noteCategory) {
         try {
           const response = await axios.post('/classify-text', {
-            text: note.content
+            title: note.title,
+            content: note.content
           });
           console.log("Classification response:", response.data);
           noteCategory = response.data.category;

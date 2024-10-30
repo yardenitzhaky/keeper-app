@@ -622,7 +622,8 @@ app.post('/add', async (req, res) => {
 
   try {
 
-    const noteCategory = category || await classifyText(content);
+    const fullText = `${title} ${content}`; // Combine title and content
+    const noteCategory = category || await classifyText(fullText);
     console.log('Classified category:', noteCategory);
 
     const result = await db.query(
@@ -638,20 +639,21 @@ app.post('/add', async (req, res) => {
 });
 
 app.post('/classify-text', async (req, res) => {
-  const { text } = req.body;
+  const { title, content } = req.body;
 
   if (!text) {
     return res.status(400).json({ error: 'No text provided' });
   }
 
   try {
+    const fullText = `${title} ${content}`;
     // Call the Flask service
     const response = await fetch(FLASK_SERVICE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text: fullText }),
     });
 
     if (!response.ok) {
