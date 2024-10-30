@@ -766,29 +766,48 @@ app.delete("/notes/:id", async (req, res) => {
 
 app.put("/notes/:id", async (req, res) => {
   const noteId = req.params.id;
-  const { title, content, category } = req.body;
+  const { title, content } = req.body;
   console.log("Updating note with ID:", noteId);
 
   if (!title || !content) {
     console.log("Title and content are required", title, content);
     return res.status(400).json({ message: "Title and content are required" });
   }
-
   try {
     const result = await db.query(
-      "UPDATE notes SET title = $1, content = $2, category = $3 WHERE id = $4 AND user_id = $5 RETURNING *;",
-      [title, content, category, noteId, req.user.id]
+      "UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND user_id = $4 RETURNING *;",
+      [title, content, noteId, req.user.id]
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Note not found or you don't have permission to update it" });
     }
-
     console.log("Note updated:", result.rows[0]);
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Database error", err);
     res.status(500).send("Server error");
+  }
+});
+
+app.put('/notes/:id/category', async (req, res) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
+  const { id } = req.params;
+  const { category } = req.body;
+
+  try {
+    const result = await db.query(
+      'UPDATE notes SET category = $1 WHERE id = $2 AND user_id = $3 RETURNING *;',
+      [category, id, req.user.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Note not found or unauthorized' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

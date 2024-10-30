@@ -11,6 +11,9 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+
+
+
 /**
  * Note Component
  * Displays a single note with title, content, and action buttons
@@ -60,18 +63,19 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
     }
   };
 
-  const handleCategoryChange = async (newCategory) => {
-    try {
-      const response = await axios.put(
-        `${API_URL}/notes/${id}`,
-        { withCredentials: true }
-      );
-      onEdit(id, title, content, response.data.category);
-    } catch (error) {
-      console.error("Failed to update category:", error);
-      setError("Failed to update category");
-    }
-  };
+const handleCategoryChange = async (newCategory) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/notes/${id}/category`,
+      { category: newCategory },
+      { withCredentials: true }
+    );
+    onEdit(id, title, content, response.data.category);
+  } catch (error) {
+    console.error("Failed to update category:", error);
+    setError("Failed to update category");
+  }
+};
 
   const categoryColors = {
     'Politics': '#FF6B6B',
