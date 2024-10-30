@@ -627,7 +627,7 @@ app.post('/add', async (req, res) => {
 
     const result = await db.query(
       'INSERT INTO notes (title, content, category, user_id) VALUES ($1, $2, $3, $4) RETURNING *;',
-      [title, content, category, req.user.id]
+      [title, content, noteCategory, req.user.id]
     );
     console.log('Note added:', result.rows[0]);
     res.status(201).json(result.rows[0]);
