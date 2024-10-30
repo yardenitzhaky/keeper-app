@@ -60,6 +60,7 @@ function CreateArea(props) {
       setNote({
         title: props.editNote.title,
         content: props.editNote.content,
+        category: props.editNote.category || ""
       });
       setExpanded(true);
     }
@@ -154,52 +155,57 @@ function CreateArea(props) {
         />
 
         {/* Category Selection and Submit Button */}
-        <Zoom in={isExpanded}>
-          <>
-            {/* Category Selection */}
-            <div className="note-options">
-              <FormControl size="small" sx={{ minWidth: 200, marginTop: 1 }}>
-                <InputLabel>Category (Optional)</InputLabel>
-                <Select
-                  name="category"
-                  value={note.category}
-                  onChange={handleChange}
-                  label="Category (Optional)"
-                >
-                  <MenuItem value=""><em>Auto-detect category</em></MenuItem>
-                  {["Politics", "Sport", "Technology", "Entertainment", "Business"].map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                      <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
-                      {cat}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  mt: 1,
-                  color: 'text.secondary'
-                }}
+        {isExpanded && (
+          <div className="note-options">
+            <FormControl size="small" sx={{ minWidth: 200, marginTop: 1 }}>
+              <InputLabel>Category (Optional)</InputLabel>
+              <Select
+                name="category"
+                value={note.category}
+                onChange={handleChange}
+                label="Category (Optional)"
               >
-                <InfoIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                AI will auto-detect the category if none selected
-              </Typography>
-            </div>
+                <MenuItem value=""><em>Auto-detect category</em></MenuItem>
+                {["Politics", "Sport", "Technology", "Entertainment", "Business"].map((cat) => (
+                  <MenuItem key={cat} value={cat}>
+                    <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
+                    {cat}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                mt: 1,
+                color: 'text.secondary'
+              }}
+            >
+              <InfoIcon sx={{ fontSize: 16, mr: 0.5 }} />
+              AI will auto-detect the category if none selected
+            </Typography>
+          </div>
+        )}
 
-            {/* Submit Button */}
-            <Fab onClick={submitNote} disabled={isLoading}>
+        {/* Submit Button with Zoom */}
+        {isExpanded && (
+          <Zoom in={true}>
+            <Fab 
+              onClick={submitNote} 
+              disabled={isLoading}
+              sx={{ position: 'absolute', right: 18, bottom: -18 }}
+            >
               {isLoading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
                 props.editNote ? <DoneIcon /> : <AddIcon />
               )}
             </Fab>
-          </>
-        </Zoom>
+          </Zoom>
+        )}
       </form>
     </div>
   );

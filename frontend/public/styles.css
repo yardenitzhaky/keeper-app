@@ -879,3 +879,13 @@ form.create-note button {
   background-color: #868e96;
   color: white;
 }
+
+.note-options {
+  margin-top: 10px;
+  padding: 8px;
+  border-top: 1px solid #eee;
+}
+
+.MuiChip-root {
+  cursor: pointer !important;
+}
