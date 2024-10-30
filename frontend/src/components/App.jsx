@@ -98,7 +98,7 @@ function App() {
     }
   }
 
-  function handleEditClick(id, title, content) {
+  function handleEditClick(id, title, content, category) {
     setEditNote({
       id,
       title,
