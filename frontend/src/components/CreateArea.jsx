@@ -77,17 +77,21 @@ function CreateArea(props) {
     setIsLoading(true);
 
     try {
-      if (props.editNote) {
-        // Update existing note
-        await props.onUpdate({
-          id: props.editNote.id,
-          title: note.title,
-          content: note.content,
-        });
-      } else {
-        // Create new note
-        await props.onAdd(note);
-      }
+
+         // Get category prediction
+    const categoryResponse = await axios.post('/classify-text', {
+      text: note.content
+    });
+    
+    const noteWithCategory = {
+      ...note,
+      category: categoryResponse.data.category
+    };
+    if (props.editNote) {
+      await props.onUpdate(noteWithCategory);
+    } else {
+      await props.onAdd(noteWithCategory);
+    }
 
       // Reset form state
       setNote({

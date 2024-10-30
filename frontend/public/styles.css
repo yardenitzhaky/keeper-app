@@ -835,3 +835,47 @@ form.create-note button {
     display: none;
   }
 }
+
+.note .MuiChip-root {
+  margin-bottom: 8px;
+}
+
+.note .MuiChip-root .MuiChip-icon {
+  color: inherit;
+}
+
+/* Category chip colors */
+.category-chip {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.category-chip.Politics {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.category-chip.Sport {
+  background-color: #4dabf7;
+  color: white;
+}
+
+.category-chip.Technology {
+  background-color: #51cf66;
+  color: white;
+}
+
+.category-chip.Entertainment {
+  background-color: #ffd43b;
+  color: black;
+}
+
+.category-chip.Business {
+  background-color: #845ef7;
+  color: white;
+}
+
+.category-chip.Uncategorized {
+  background-color: #868e96;
+  color: white;
+}

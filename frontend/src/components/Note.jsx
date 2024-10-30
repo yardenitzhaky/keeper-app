@@ -4,13 +4,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
+import CategoryIcon from "@mui/icons-material/Category";
+import Chip from '@mui/material/Chip';
+
+
 
 /**
  * Note Component
  * Displays a single note with title, content, and action buttons
  * Supports edit and delete functionality with loading states
  */
-const Note = ({ id, title, content, onDelete, onEdit }) => {
+const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit }) => {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
@@ -51,6 +55,19 @@ const Note = ({ id, title, content, onDelete, onEdit }) => {
       setIsEditing(false);
     }
   };
+  // Category color mapping
+  const categoryColors = {
+    'Politics': '#FF6B6B',      // Red
+    'Sport': '#4DABF7',         // Blue
+    'Technology': '#51CF66',    // Green
+    'Entertainment': '#FFD43B',  // Yellow
+    'Business': '#845EF7',      // Purple
+    'Uncategorized': '#868E96'  // Gray
+  };
+  
+  const getCategoryColor = (cat) => categoryColors[cat] || categoryColors.Uncategorized;
+
+  
 
   // ============================================================================
   // RENDER
@@ -58,6 +75,24 @@ const Note = ({ id, title, content, onDelete, onEdit }) => {
   
   return (
     <div className="note" role="article">
+
+   {/* Category Chip */}
+   <div className="note-category">
+        <Tooltip title={`Category: ${category}`}>
+          <Chip
+            icon={<CategoryIcon />}
+            label={category}
+            size="small"
+            sx={{
+              backgroundColor: getCategoryColor(category),
+              color: category === 'Entertainment' ? 'black' : 'white',
+              fontWeight: 500,
+              marginBottom: '8px'
+            }}
+          />
+        </Tooltip>
+      </div>
+
       {/* Note Content */}
       <h1>{title}</h1>
       <p>{content}</p>

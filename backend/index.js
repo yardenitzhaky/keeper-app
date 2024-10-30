@@ -25,6 +25,14 @@ import dotenv from 'dotenv';
 // Initialize Express application
 const app = express();
 
+import { spawn } from 'child_process';
+import fetch from 'node-fetch';
+
+// Add this configuration
+const FLASK_SERVICE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://keeper-backend-kgj9.onrender.com/classifier'  // Production URL
+  : 'http://localhost:5000';              // Development URL
+
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
 // ============================================================================
@@ -613,9 +621,13 @@ app.post('/add', async (req, res) => {
   const { title, content } = req.body;
 
   try {
+
+    const category = await classifyText(content);
+
+
     const result = await db.query(
-      'INSERT INTO notes (title, content, user_id) VALUES ($1, $2, $3) RETURNING *;',
-      [title, content, req.user.id]
+      'INSERT INTO notes (title, content, category, user_id) VALUES ($1, $2, $3, $4) RETURNING *;',
+      [title, content, category, req.user.id]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -624,7 +636,53 @@ app.post('/add', async (req, res) => {
   }
 });
 
+app.post('/classify-text', async (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: 'No text provided' });
+  }
+
+  try {
+    // Call the Flask service
+    const response = await fetch(FLASK_SERVICE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Flask service returned ${response.status}`);
+    }
+
+    const result = await response.json();
+    res.json(result);
+  } catch (error) {
+    console.error('Classification error:', error);
+    
+    // Fallback to default category if classification fails
+    res.json({ 
+      category: 'Uncategorized',
+      error: 'Classification failed, using default category'
+    });
+  }
+});
+
 //GET ROUTES
+
+
+// Get all categories
+app.get('/categories', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM categories ORDER BY name');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Database error', err);
+    res.status(500).send('Server error');
+  }
+});
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -734,3 +792,25 @@ app.put("/notes/:id", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+async function classifyText(text) {
+  try {
+    const response = await fetch(`${FLASK_SERVICE_URL}/classify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Classification service returned ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.category;
+  } catch (error) {
+    console.error('Classification error:', error);
+    return 'Uncategorized';
+  }
+}
