@@ -194,20 +194,4 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
   );
 };
 
-// ============================================================================
-// PROP TYPES
-// ============================================================================
-
-Note.propTypes = {
-  id: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]).isRequired,
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  category: PropTypes.string,
-  onDelete: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired
-};
-
 export default Note;
