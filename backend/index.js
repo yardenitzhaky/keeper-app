@@ -30,7 +30,7 @@ import fetch from 'node-fetch';
 
 // Add this configuration
 const FLASK_SERVICE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://keeper-backend-kgj9.onrender.com'  // Production URL
+  ? 'https://keeper-model.onrender.com'  // Production URL
   : 'http://localhost:5000';              // Development URL
 
 // ============================================================================
