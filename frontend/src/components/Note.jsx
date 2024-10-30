@@ -205,6 +205,7 @@ Note.propTypes = {
   ]).isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
+  category: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired
 };

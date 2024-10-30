@@ -103,6 +103,7 @@ function App() {
       id,
       title,
       content,
+      category,
     });
   }
 
@@ -118,7 +119,8 @@ function App() {
         `${API_URL}/notes/${updatedNote.id}`,
         {
           title: updatedNote.title,
-          content: updatedNote.content
+          content: updatedNote.content,
+          category: updatedNote.category
         },
         { withCredentials: true }
       );
@@ -157,6 +159,7 @@ function App() {
                     id={noteItem.id}
                     title={noteItem.title}
                     content={noteItem.content}
+                    category={noteItem.category}  
                     onDelete={deleteNote}
                     onEdit={handleEditClick}
                   />
