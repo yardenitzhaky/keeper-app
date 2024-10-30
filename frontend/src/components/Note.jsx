@@ -98,19 +98,46 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
     <div className="note" role="article">
       {/* Category Chip */}
       <div className="note-category">
-      <select 
-        value={selectedCategory} 
-        onChange={handleCategoryChange}
-        className="category-select"
-      >
-        <option value="Uncategorized">Uncategorized</option>
-        <option value="Politics">Politics</option>
-        <option value="Sport">Sport</option>
-        <option value="Technology">Technology</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Business">Business</option>
-      </select>
-    </div>
+        <Tooltip title="Click to change category">
+          <Chip
+            icon={<CategoryIcon />}
+            label={selectedCategory || 'Uncategorized'}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            size="small"
+            sx={{
+              backgroundColor: categoryColors[category] || categoryColors.Uncategorized,
+              color: category === 'Entertainment' ? 'black' : 'white',
+              fontWeight: 500,
+              marginBottom: '8px',
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.9
+              }
+            }}
+          />
+        </Tooltip>
+
+        {/* Category Selection Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          {["Politics", "Sport", "Technology", "Entertainment", "Business", "Uncategorized"].map((cat) => (
+            <MenuItem 
+              key={cat}
+              onClick={() => {
+                handleCategoryChange(cat);
+                setAnchorEl(null);
+              }}
+              selected={cat === selectedCategory}
+            >
+              <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
+              {cat}
+            </MenuItem>
+          ))}
+        </Menu>
+      </div>
 
       {/* Note Content */}
       <h1>{title}</h1>
