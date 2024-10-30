@@ -6,6 +6,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import CategoryIcon from "@mui/icons-material/Category";
 import Chip from '@mui/material/Chip';
+import { Menu, MenuItem } from '@mui/material';
+
 
 
 
@@ -21,6 +23,8 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
 
   // ============================================================================
   // EVENT HANDLERS
@@ -55,14 +59,24 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
       setIsEditing(false);
     }
   };
-  // Category color mapping
+
+  const handleCategoryChange = async (newCategory) => {
+    try {
+      await axios.put(`/notes/${id}/category`, { category: newCategory });
+      onEdit(id, title, content, newCategory);
+    } catch (error) {
+      console.error("Failed to update category:", error);
+      setError("Failed to update category");
+    }
+  };
+
   const categoryColors = {
-    'Politics': '#FF6B6B',      // Red
-    'Sport': '#4DABF7',         // Blue
-    'Technology': '#51CF66',    // Green
-    'Entertainment': '#FFD43B',  // Yellow
-    'Business': '#845EF7',      // Purple
-    'Uncategorized': '#868E96'  // Gray
+    'Politics': '#FF6B6B',
+    'Sport': '#4DABF7',
+    'Technology': '#51CF66',
+    'Entertainment': '#FFD43B',
+    'Business': '#845EF7',
+    'Uncategorized': '#868E96'
   };
   
   const getCategoryColor = (cat) => categoryColors[cat] || categoryColors.Uncategorized;
@@ -75,22 +89,47 @@ const Note = ({ id, title, content, category = "Uncategorized", onDelete, onEdit
   
   return (
     <div className="note" role="article">
-
-   {/* Category Chip */}
-   <div className="note-category">
-        <Tooltip title={`Category: ${category}`}>
+      {/* Category Chip */}
+      <div className="note-category">
+        <Tooltip title="Click to change category">
           <Chip
             icon={<CategoryIcon />}
-            label={category}
+            label={category || 'Uncategorized'}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
             size="small"
             sx={{
-              backgroundColor: getCategoryColor(category),
+              backgroundColor: categoryColors[category] || categoryColors.Uncategorized,
               color: category === 'Entertainment' ? 'black' : 'white',
               fontWeight: 500,
-              marginBottom: '8px'
+              marginBottom: '8px',
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.9
+              }
             }}
           />
         </Tooltip>
+
+        {/* Category Selection Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          {["Politics", "Sport", "Technology", "Entertainment", "Business", "Uncategorized"].map((cat) => (
+            <MenuItem 
+              key={cat}
+              onClick={() => {
+                handleCategoryChange(cat);
+                setAnchorEl(null);
+              }}
+              selected={cat === category}
+            >
+              <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
+              {cat}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
 
       {/* Note Content */}

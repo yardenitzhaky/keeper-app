@@ -793,6 +793,19 @@ app.put("/notes/:id", async (req, res) => {
   }
 });
 
+app.put('/notes/:id/category', async (req, res) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ message: 'Not authenticated' });
+
+  try {
+    const result = await db.query(
+      'UPDATE notes SET category = $1 WHERE id = $2 AND user_id = $3 RETURNING *;',
+      [req.body.category, req.params.id, req.user.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

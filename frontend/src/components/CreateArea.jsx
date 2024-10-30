@@ -11,11 +11,14 @@
 import React, { useState, useEffect } from "react";
 
 // Material-UI Components
-import { Fab, Zoom } from "@mui/material";
+import { Fab, Zoom, FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DoneIcon from '@mui/icons-material/Done';
 import CircularProgress from '@mui/material/CircularProgress';
+import CategoryIcon from "@mui/icons-material/Category";
+import InfoIcon from "@mui/icons-material/Info";
+import Tooltip from '@mui/material/Tooltip';
 
 // Custom Components
 import LoadingButton from "./LoadingButton.jsx";
@@ -36,6 +39,16 @@ function CreateArea(props) {
     title: "",
     content: ""
   });
+
+  const categoryColors = {
+    'Politics': '#FF6B6B',
+    'Sport': '#4DABF7',
+    'Technology': '#51CF66',
+    'Entertainment': '#FFD43B',
+    'Business': '#845EF7',
+    'Uncategorized': '#868E96'
+  };
+
 
   // ============================================================================
   // EFFECTS
@@ -140,15 +153,52 @@ function CreateArea(props) {
           rows={isExpanded ? 3 : 1}
         />
 
-        {/* Submit button with loading state */}
+        {/* Category Selection and Submit Button */}
         <Zoom in={isExpanded}>
-          <Fab onClick={submitNote} disabled={isLoading}>
-            {isLoading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              props.editNote ? <DoneIcon /> : <AddIcon />
-            )}
-          </Fab>
+          <>
+            {/* Category Selection */}
+            <div className="note-options">
+              <FormControl size="small" sx={{ minWidth: 200, marginTop: 1 }}>
+                <InputLabel>Category (Optional)</InputLabel>
+                <Select
+                  name="category"
+                  value={note.category}
+                  onChange={handleChange}
+                  label="Category (Optional)"
+                >
+                  <MenuItem value=""><em>Auto-detect category</em></MenuItem>
+                  {["Politics", "Sport", "Technology", "Entertainment", "Business"].map((cat) => (
+                    <MenuItem key={cat} value={cat}>
+                      <CategoryIcon sx={{ mr: 1, color: categoryColors[cat] }} />
+                      {cat}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  mt: 1,
+                  color: 'text.secondary'
+                }}
+              >
+                <InfoIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                AI will auto-detect the category if none selected
+              </Typography>
+            </div>
+
+            {/* Submit Button */}
+            <Fab onClick={submitNote} disabled={isLoading}>
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                props.editNote ? <DoneIcon /> : <AddIcon />
+              )}
+            </Fab>
+          </>
         </Zoom>
       </form>
     </div>
