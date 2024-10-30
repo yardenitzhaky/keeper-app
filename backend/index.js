@@ -30,7 +30,7 @@ import fetch from 'node-fetch';
 
 // Add this configuration
 const FLASK_SERVICE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://keeper-backend-kgj9.onrender.com/classifier'  // Production URL
+  ? 'https://keeper-backend-kgj9.onrender.com'  // Production URL
   : 'http://localhost:5000';              // Development URL
 
 // ============================================================================
@@ -619,10 +619,15 @@ app.post('/add', async (req, res) => {
   }
 
   const { title, content } = req.body;
+  let category = 'Uncategorized';
 
   try {
 
-    const category = await classifyText(content);
+    try {
+      category = await classifyText(content);
+    } catch (classifyError) {
+      console.error('Classification failed:', classifyError);
+    }
 
 
     const result = await db.query(
