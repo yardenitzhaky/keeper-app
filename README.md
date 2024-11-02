@@ -1,51 +1,105 @@
-# 📝 Keeper App - **[View Website](https://keeper-frontend-36zj.onrender.com)**
+# 📝 Keeper App
 
-**Keeper App** is a full-stack JavaScript web application inspired by Google Keep. It allows users to create, manage, and organize notes easily with modern UI/UX features and full user authentication. This project is built using the latest web technologies and provides a smooth, interactive experience for note-taking and management.
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://keeper-frontend-36zj.onrender.com)
+[![React](https://img.shields.io/badge/react-v18.3.1-blue)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/node-v18+-green)](https://nodejs.org/)
+
+**Keeper App** is a full-stack web application inspired by Google Keep, designed to help users manage and organize their notes efficiently. With a modern UI/UX, robust authentication, and smart categorization features, Keeper App provides a seamless note-taking experience.
+
+**[✨ Try the Live Demo](https://keeper-frontend-36zj.onrender.com)**
 
 ## 🚀 Features
 
-- ✍️ **Create, Edit, and Delete Notes** – Easily manage your notes with a simple interface.
-- 🔐 **User Authentication** – Secure login and registration with password hashing using `bcrypt`.
-- 🔑 **Google OAuth 2.0** – Sign in with Google for quick and easy access to the app.
-- 🛠 **Full CRUD Functionality** – Seamlessly handle all operations for managing notes (Create, Read, Update, Delete).
-- 📂 **Database Management** – Notes are stored securely in PostgreSQL.
-- 🔄 **Session Management** – Keep users logged in with persistent sessions using cookies.
-- 🌐 **Responsive Design** – Optimized for both desktop and mobile platforms.
+### Core Functionality
+- ✍️ **Intuitive Note Management**
+  - Create, edit, and delete notes with a clean, user-friendly interface
 
-## 🧰 Technologies Used
+### Smart Organization
+- 🤖 **AI-Powered Categorization**
+  - Automatic note categorization using machine learning
+  - Categories include: Politics, Sport, Technology, Entertainment, Business
+  - Manual category override option
+  - Visual category indicators with color coding
 
-- **Front-end**:  
-  - ⚛️ React.js
-  - 🎨 CSS3
-  - 🛠 Axios
+### Security & Authentication
+- 🔐 **Robust User Authentication**
+  - Secure email/password registration and login
+  - Google OAuth 2.0 integration for single-click access
+  - Password hashing using bcrypt
+  - Email verification system
+  - Password reset functionality
 
-- **Back-end**:  
-  - 🟢 Node.js
-  - 🚧 Express.js
-  - 🔒 Passport.js (Local and Google OAuth2 authentication)
-  - 🔑 bcrypt (password hashing)
+### User Experience
+- 🎨 **Modern Design**
+  - Responsive layout optimized for all devices
+  - Material UI components for consistent styling
+  - Smooth animations and transitions
+  - Interactive loading states and feedback
 
-- **Database**:  
-  - 🗄 PostgreSQL
+### Data Management
+- 💾 **Reliable Storage**
+  - PostgreSQL database for secure data persistence
+  - Session management with cookies
+  - Cross-origin resource sharing (CORS) support
+  - Regular backups and data protection
 
-- **Other Tools**:  
-  - ⚡️ Vite (fast development environment)
-  - 🌍 RESTful APIs
-  - 🔗 CORS for cross-origin requests
+## 🛠️ Technology Stack
 
-## ⚙️ Usage
+### Frontend
+- ⚛️ **React 18.3.1**
+  - Hooks for state management
+  - Context API for global state
+  - React Router for navigation
+  - Material UI components
+- 🎨 **Styling**
+  - CSS3 with modern features
+  - Responsive design principles
+  - CSS-in-JS solutions
+- 📡 **API Integration**
+  - Axios for HTTP requests
+  - RESTful API consumption
+  - Real-time updates
 
-- **Login/Register**: Users can sign up or log in using their email/password or directly with their Google account via OAuth2.
-- **Create Notes**: Click the `+` button to add new notes. Notes can be edited or deleted from the same screen.
-- **View Notes**: The homepage displays all user-specific notes.
+### Backend
+- 🟢 **Node.js**
+  - Express.js framework
+  - RESTful API design
+  - Middleware architecture
+- 🔒 **Authentication & Security**
+  - Passport.js for authentication
+  - bcrypt for password hashing
+  - CORS protection
+- 📬 **Email Services**
+  - Nodemailer for transactional emails
+  - Email verification system
+  - Password reset workflows
 
+### Database
+- 🗄️ **PostgreSQL**
+  - Robust data storage
+  - Data relationships
+  - Indexing and optimization
 
-## 💬 Contact
+### Machine Learning Service
+- 🤖 **Python Flask API**
+  - Note classification model
+  - Natural language processing
+  - Real-time categorization
+  - Scikit-learn pipeline
 
-For any inquiries or questions, feel free to reach out via:
-- [Email](yardene015@gmail.com)
-- [LinkedIn](https://www.linkedin.com/in/yardenitzhaky)
+## 📞 Contact
+
+Yarden Itzhaky
+- 📧 Email: [yardene015@gmail.com](mailto:yardene015@gmail.com)
+- 💼 LinkedIn: [linkedin.com/in/yardenitzhaky](https://www.linkedin.com/in/yardenitzhaky)
+- 🌐 Portfolio: [yardenitzhaky.github.io/Portfolio](https://yardenitzhaky.github.io/Portfolio/)
+
+## 🙏 Acknowledgments
+
+- Google Keep for inspiration
+- Material-UI for components
+- The open-source community
 
 ---
 
-Enjoy taking notes with **Keeper App**! ✨
+Made with ❤️ by Yarden Itzhaky
