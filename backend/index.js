@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 // ============================================================================
 
 // Construct database connection string
-const connectionString = process.env.DATABASE_URL || 
+const connectionString =
     `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`;
 
 // Create database pool
