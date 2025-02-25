@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "https://yardenitzhaky.github.io/keeper-app/static/js/main.7db318e5.chunk.js",
-    "main.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/main.7db318e5.chunk.js.map",
+    "main.js": "https://yardenitzhaky.github.io/keeper-app/static/js/main.74668123.chunk.js",
+    "main.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/main.74668123.chunk.js.map",
     "runtime-main.js": "https://yardenitzhaky.github.io/keeper-app/static/js/runtime-main.d3b3a5f3.js",
     "runtime-main.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/runtime-main.d3b3a5f3.js.map",
     "static/js/2.0ed541b6.chunk.js": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js",
     "static/js/2.0ed541b6.chunk.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js.map",
     "index.html": "https://yardenitzhaky.github.io/keeper-app/index.html",
-    "precache-manifest.52356b43b199a311fa10708c1dc1a27f.js": "https://yardenitzhaky.github.io/keeper-app/precache-manifest.52356b43b199a311fa10708c1dc1a27f.js",
+    "precache-manifest.5ce7eebfa7d10297ceb0dd55a02201c9.js": "https://yardenitzhaky.github.io/keeper-app/precache-manifest.5ce7eebfa7d10297ceb0dd55a02201c9.js",
     "service-worker.js": "https://yardenitzhaky.github.io/keeper-app/service-worker.js",
     "static/js/2.0ed541b6.chunk.js.LICENSE.txt": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.d3b3a5f3.js",
     "static/js/2.0ed541b6.chunk.js",
-    "static/js/main.7db318e5.chunk.js"
+    "static/js/main.74668123.chunk.js"
   ]
 }
