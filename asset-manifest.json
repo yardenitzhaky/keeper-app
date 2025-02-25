@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.js": "/keeper-app/static/js/main.c43cf778.chunk.js",
-    "main.js.map": "/keeper-app/static/js/main.c43cf778.chunk.js.map",
-    "runtime-main.js": "/keeper-app/static/js/runtime-main.27d0de25.js",
-    "runtime-main.js.map": "/keeper-app/static/js/runtime-main.27d0de25.js.map",
-    "static/js/2.0ed541b6.chunk.js": "/keeper-app/static/js/2.0ed541b6.chunk.js",
-    "static/js/2.0ed541b6.chunk.js.map": "/keeper-app/static/js/2.0ed541b6.chunk.js.map",
-    "index.html": "/keeper-app/index.html",
-    "precache-manifest.231592d6dfbe322f1cdd8b5e27d3c78c.js": "/keeper-app/precache-manifest.231592d6dfbe322f1cdd8b5e27d3c78c.js",
-    "service-worker.js": "/keeper-app/service-worker.js",
-    "static/js/2.0ed541b6.chunk.js.LICENSE.txt": "/keeper-app/static/js/2.0ed541b6.chunk.js.LICENSE.txt"
+    "main.js": "https://yardenitzhaky.github.io/keeper-app/static/js/main.c43cf778.chunk.js",
+    "main.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/main.c43cf778.chunk.js.map",
+    "runtime-main.js": "https://yardenitzhaky.github.io/keeper-app/static/js/runtime-main.d3b3a5f3.js",
+    "runtime-main.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/runtime-main.d3b3a5f3.js.map",
+    "static/js/2.0ed541b6.chunk.js": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js",
+    "static/js/2.0ed541b6.chunk.js.map": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js.map",
+    "index.html": "https://yardenitzhaky.github.io/keeper-app/index.html",
+    "precache-manifest.45f09a7dc9e023a68ed6a87bd0215b9a.js": "https://yardenitzhaky.github.io/keeper-app/precache-manifest.45f09a7dc9e023a68ed6a87bd0215b9a.js",
+    "service-worker.js": "https://yardenitzhaky.github.io/keeper-app/service-worker.js",
+    "static/js/2.0ed541b6.chunk.js.LICENSE.txt": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.27d0de25.js",
+    "static/js/runtime-main.d3b3a5f3.js",
     "static/js/2.0ed541b6.chunk.js",
     "static/js/main.c43cf778.chunk.js"
   ]
