@@ -1,0 +1,922 @@
+/* -------------------- 
+   Reset and Base Styles
+-------------------- */
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  background: #eee;
+  background-image: url("https://www.transparenttextures.com/patterns/axiom-pattern.png");
+  padding: 0 16px;
+}
+
+/* -------------------- 
+      Header Styles
+-------------------- */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5ba13;
+  padding: 16px 32px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+  color: #fff;
+  font-family: "McLaren", cursive;
+  font-weight: 200;
+  display: flex;
+  align-items: center;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.app-title:hover {
+  color: #ffdd80;
+}
+
+/* Adjust the icon margin */
+.app-title svg {
+  margin-right: 10px;
+}
+
+/* Logout button styles */
+.logout-button {
+  padding: 8px 16px;
+  background-color: #fff;
+  border: none;
+  border-radius: 4px;
+  color: #f5ba13;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-left: auto;
+}
+
+.logout-button:hover {
+  background-color: #f5ba13;
+  color: #fff;
+}
+
+/* -------------------- 
+      Footer Styles
+-------------------- */
+
+footer {
+  position: fixed;
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-icon {
+  color: #666;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  position: relative; /* For tooltip positioning */
+}
+
+.social-icon:hover {
+  color: #f5ba13;
+  transform: translateY(-2px);
+}
+
+/* Tooltip styling */
+.social-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  margin-bottom: 5px;
+}
+
+/* Show tooltip on hover */
+.social-icon:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.copyright {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.separator {
+  color: #666;
+}
+
+.creator {
+  color: #f5ba13;
+  font-weight: 500;
+}
+
+/* -------------------- 
+      Note Styles
+-------------------- */
+
+.note {
+  position: relative;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 30px;
+  width: 400px;
+  margin: 16px;
+  float: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 5px solid #f5ba13;
+}
+
+/* Hover effect for note */
+.note:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Note Title */
+.note h1 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Note Content */
+.note p {
+  font-size: 1em;
+  margin-bottom: 20px;
+  color: #555;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Buttons Container */
+.note .note-buttons {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+/* Buttons Styling */
+.note button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  color: #f5ba13;
+  transition: color 0.2s ease;
+}
+
+.note button:hover {
+  color: #e08904;
+}
+
+/* Adjustments for the icons */
+.note button svg {
+  font-size: 2.2em;
+}
+
+/* -------------------- 
+  Create Note Form Styles
+-------------------- */
+
+form.create-note {
+  position: relative;
+  width: 480px;
+  margin: 30px auto 20px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 7px;
+  box-shadow: 0 1px 5px rgb(138, 137, 137);
+}
+
+form.create-note input,
+form.create-note textarea {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-size: 1.2em;
+  font-family: inherit;
+  resize: none;
+}
+
+form.create-note button {
+  position: absolute;
+  right: 18px;
+  bottom: -18px;
+  background: #f5ba13;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  outline: none;
+}
+
+/* -------------------- 
+  Authentication Container Styles
+-------------------- */
+
+.auth-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.5s ease-out;
+  margin-bottom: 3.5rem; /* Add margin to prevent footer overlap */
+}
+
+/* Heading */
+.auth-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Input Fields */
+.auth-container input[type='text'],
+.auth-container input[type='password'] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+/* Input Focus Effect */
+.auth-container input[type='text']:focus,
+.auth-container input[type='password']:focus {
+  border-color: #f5ba13;
+  box-shadow: 0 0 5px rgba(245, 186, 19, 0.5);
+}
+
+/* Checkbox Label */
+.auth-container label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+/* Checkbox */
+.auth-container input[type='checkbox'] {
+  margin-right: 10px;
+}
+
+/* Buttons */
+.auth-container button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #f5ba13;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.auth-container button:hover {
+  background-color: #e0a800;
+}
+
+/* Social Login Button */
+.social-login-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #db4437; /* Google red color */
+  color: #fff;
+  font-size: 1em;
+  padding: 12px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.social-login-button:hover {
+  background-color: #c33d2e;
+}
+
+.social-login-button img {
+  width: 20px;
+  margin-right: 10px;
+}
+
+/* Links */
+.auth-container p {
+  text-align: center;
+  color: #555;
+}
+
+.auth-container a {
+  color: #f5ba13;
+  text-decoration: none;
+}
+
+.auth-container a:hover {
+  text-decoration: underline;
+}
+
+/* Logo */
+.logo {
+  display: block;
+  margin: 0 auto 20px;
+  max-width: 150px;
+}
+
+/* -------------------- 
+    Utility Styles 
+-------------------- */
+
+.error {
+  color: #d8000c;
+  background-color: #ffeded;
+  padding: 10px;
+  border: 1px solid #d8000c;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+/* -------------------- 
+   Loading Spinner Styles
+-------------------- */
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.spinner-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.spinner-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 4px solid transparent;
+}
+
+.spinner-ring.outer {
+  width: 100%;
+  height: 100%;
+  border-top-color: #f5ba13;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-ring.inner {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border-top-color: #f5ba13;
+  opacity: 0.6;
+  animation: spin 0.8s linear infinite reverse;
+}
+
+.spinner-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background-color: #f5ba13;
+  border-radius: 50%;
+  animation: pulse 1s ease infinite;
+}
+
+.spinner-text {
+  color: #f5ba13;
+  font-size: 16px;
+  font-weight: 500;
+  animation: pulse 1s ease infinite;
+  text-align: center;
+}
+
+.spinner-subtext {
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  animation: pulse 1s ease infinite;
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+/* -------------------- 
+   Cookie Alert Styles
+-------------------- */
+
+.cookie-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.cookie-alert-modal {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.cookie-alert-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.cookie-alert-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cookie-alert-accept {
+  padding: 8px 16px;
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cookie-alert-accept:hover {
+  background-color: #16a34a;
+}
+
+.cookie-alert-content {
+  padding: 20px;
+}
+
+.cookie-alert-description {
+  margin-bottom: 20px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.cookie-alert-browser-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cookie-alert-browser-button {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cookie-alert-browser-button.active {
+  background: #f3f4f6;
+  font-weight: 500;
+}
+
+.cookie-alert-instructions {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.cookie-alert-instructions h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.cookie-alert-instructions ol {
+  padding-left: 20px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.cookie-alert-footer {
+  padding: 16px 20px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 0.875rem;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* -------------------- 
+      Media Queries
+-------------------- */
+
+@media (max-width: 600px) {
+  .notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 3rem;
+  }
+
+  header {
+    padding: 12px 16px;
+  }
+
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .note {
+    width: 90%;
+    margin: 16px auto;
+    float: none;
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .note h1 {
+    font-size: 1.1em;
+    word-break: break-word;
+  }
+
+  .note p {
+    font-size: 0.9em;
+    word-break: break-word;
+  }
+
+  form.create-note {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .auth-container {
+    margin: 40px auto;
+    padding: 30px 20px;
+  }
+
+  .note {
+    float: none !important;
+  }
+
+  /* Ensure buttons don't overflow */
+  .note .note-buttons {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+  }
+
+  .cookie-alert-modal {
+    margin: 10px;
+    max-height: 85vh;
+  }
+
+  .cookie-alert-header {
+    padding: 15px;
+  }
+
+  .cookie-alert-content {
+    padding: 15px;
+  }
+
+  .cookie-alert-footer {
+    padding: 15px;
+  }
+} /* Closed media query */
+
+@media (min-width: 601px) {
+  .notes-container {
+    display: block; /* Reset the flex container for desktop */
+  }
+
+  .note {
+    float: left; /* Keep the original floating behavior */
+    width: 400px;
+    margin: 16px;
+  }
+
+  .auth-container {
+    margin: 40px auto;
+    padding: 30px;
+  }
+
+  form.create-note {
+    width: 90%;
+  }
+}
+
+@media print {
+  footer {
+    position: static;
+    background: none;
+    border: none;
+  }
+}
+
+/* -------------------- 
+   Animations
+-------------------- */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -------------------- 
+   Disabled States 
+-------------------- */
+
+/* Disabled state styles for note buttons */
+.note button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Disabled state styles for create note form */
+.create-note input:disabled,
+.create-note textarea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Loading button styles */
+.fab-progress {
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.user-avatar {
+  background-color: #f5ba13;
+  color: white;
+}
+
+.username {
+  font-weight: 500;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .username {
+    display: none;
+  }
+}
+
+.note .MuiChip-root {
+  margin-bottom: 8px;
+}
+
+.note .MuiChip-root .MuiChip-icon {
+  color: inherit;
+}
+
+/* Category chip colors */
+.category-chip {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.category-chip.Politics {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.category-chip.Sport {
+  background-color: #4dabf7;
+  color: white;
+}
+
+.category-chip.Technology {
+  background-color: #51cf66;
+  color: white;
+}
+
+.category-chip.Entertainment {
+  background-color: #ffd43b;
+  color: black;
+}
+
+.category-chip.Business {
+  background-color: #845ef7;
+  color: white;
+}
+
+.category-chip.Uncategorized {
+  background-color: #868e96;
+  color: white;
+}
+
+.note-options {
+  margin-top: 10px;
+  padding: 8px;
+  border-top: 1px solid #eee;
+}
+
+.MuiChip-root {
+  cursor: pointer !important;
+}
+
+.note-category {
+  margin-bottom: 10px;
+}
+
+.category-select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath fill='%23333' d='M6 6L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+}
+
+.category-select:focus {
+  outline: none;
+  border-color: #f5ba13;
+  box-shadow: 0 0 0 2px rgba(245, 186, 19, 0.2);
+}
+
+.category-select option {
+  background-color: white;
+  color: #333;
+}
