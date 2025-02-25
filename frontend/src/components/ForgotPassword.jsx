@@ -75,7 +75,7 @@ const ForgotPassword = () => {
   return (
     <div className="auth-container">
       {/* Logo */}
-      <img src="/images/logo.PNG" alt="Logo" className="logo" />
+      <img src="%PUBLIC_URL%/images/logo.PNG" alt="Logo" className="logo" />
       
       {/* Header */}
       <h2>Forgot Password</h2>
