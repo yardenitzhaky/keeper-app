@@ -161,7 +161,7 @@ function Login() {
   
   return (
     <div className="auth-container">
-      <img src="%PUBLIC_URL%/images/logo.PNG" alt="Keeper App Logo" className="logo" />
+      <img src={`${process.env.PUBLIC_URL}/images/logo.PNG`} alt="App Logo"  className="logo" />
       <h2>Login</h2>
       
       <form onSubmit={handleLogin} noValidate>
@@ -237,7 +237,7 @@ function Login() {
         className="social-login-button"
         aria-label="Sign in with Google"
       >
-        <img src="%PUBLIC_URL%/images/google_logo.png" alt="" aria-hidden="true" />
+        <img src={`${process.env.PUBLIC_URL}/images/google_logo.png`} alt="Google"  aria-hidden="true" />
         <span>Sign in with Google</span>
       </LoadingButton>
 
