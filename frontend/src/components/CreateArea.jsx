@@ -98,7 +98,7 @@ function CreateArea(props) {
       
       if (!noteCategory) {
         try {
-          const response = await axios.post('/classify-text', {
+          const response = await axios.post(`${API_URL}/classify-text`, {
             title: note.title,
             content: note.content
           });
