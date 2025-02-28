@@ -637,8 +637,11 @@ app.post('/add', async (req, res) => {
 app.post('/classify-text', async (req, res) => {
   const { title, content } = req.body;
   
+  console.log("Classification request received:", { title, content });
+  
   // Better validation - check both title and content
   if (!title && !content) {
+    console.log("No text provided for classification");
     return res.status(400).json({ 
       success: false,
       error: 'No text provided', 
@@ -649,6 +652,7 @@ app.post('/classify-text', async (req, res) => {
   try {
     // Combine title and content, handling nulls
     const fullText = `${title || ''} ${content || ''}`.trim();
+    console.log("Sending to Flask service:", fullText);
     
     // Add timeout to fetch to prevent hanging requests
     const controller = new AbortController();
@@ -667,11 +671,14 @@ app.post('/classify-text', async (req, res) => {
     // Clear the timeout
     clearTimeout(timeoutId);
     
+    console.log("Flask service response status:", response.status);
+    
     if (!response.ok) {
       throw new Error(`Flask service returned ${response.status}: ${response.statusText}`);
     }
     
     const result = await response.json();
+    console.log("Classification result:", result);
     
     // Validate response structure
     if (!result || typeof result.category !== 'string') {
@@ -683,7 +690,7 @@ app.post('/classify-text', async (req, res) => {
       success: true
     });
   } catch (error) {
-    console.error('Classification error:', error);
+    console.error('Classification error details:', error);
     
     // Handle specific error types
     let errorMessage = 'Classification failed, using default category';
@@ -694,6 +701,8 @@ app.post('/classify-text', async (req, res) => {
       errorMessage = 'Classification service unavailable';
     }
     
+    console.log("Returning fallback category due to error:", errorMessage);
+    
     // Always return a valid response, even on error
     res.json({
       category: 'Uncategorized',
@@ -702,7 +711,6 @@ app.post('/classify-text', async (req, res) => {
     });
   }
 });
-
 //GET ROUTES
 
 
@@ -848,6 +856,7 @@ app.listen(port, () => {
 });
 
 async function classifyText(text) {
+  console.log("Classifying text via Node.js backend:", text);
   try {
     const response = await fetch(`${FLASK_SERVICE_URL}/classify`, {
       method: 'POST',
@@ -856,15 +865,36 @@ async function classifyText(text) {
       },
       body: JSON.stringify({ text }),
     });
-
+    
+    console.log("Flask service response status:", response.status);
+    
     if (!response.ok) {
       throw new Error(`Classification service returned ${response.status}`);
     }
-
+    
     const result = await response.json();
+    console.log("Classification result from Flask:", result);
+    
+    if (!result || typeof result.category !== 'string') {
+      throw new Error('Invalid response structure from Flask service');
+    }
+    
     return result.category;
   } catch (error) {
-    console.error('Classification error:', error);
+    console.error('Classification error details:', error);
+    
+    // Provide more specific error handling
+    let errorMessage = 'Unknown error';
+    if (error.name === 'AbortError') {
+      errorMessage = 'Request timeout';
+    } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+      errorMessage = 'Network error - Flask service unreachable';
+    } else {
+      errorMessage = error.message;
+    }
+    
+    console.error(`Classification failed: ${errorMessage}. Using default category.`);
     return 'Uncategorized';
   }
+
 }
