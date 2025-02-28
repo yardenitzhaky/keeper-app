@@ -28,10 +28,7 @@ const app = express();
 import { spawn } from 'child_process';
 import fetch from 'node-fetch';
 
-// Add this configuration
-const FLASK_SERVICE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://keeper-model.onrender.com'  // Production URL
-  : 'https://keeper-model.onrender.com';              // Development URL
+const FLASK_SERVICE_URL = 'https://keeper-model.onrender.com';
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
