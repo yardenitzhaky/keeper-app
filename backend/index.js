@@ -640,14 +640,14 @@ app.post('/add', async (req, res) => {
 app.post('/classify-text', async (req, res) => {
   const { title, content } = req.body;
 
-  if (!text) {
+  if (!title && !content) {
     return res.status(400).json({ error: 'No text provided' });
   }
 
   try {
     const fullText = `${title} ${content}`;
     // Call the Flask service
-    const response = await fetch(FLASK_SERVICE_URL, {
+    const response = await fetch(`${FLASK_SERVICE_URL}/classify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
