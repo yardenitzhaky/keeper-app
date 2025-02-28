@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6845d402f3af6457e1c2a23aaea67b64",
+    "revision": "36c51c4a25fe16d7c718517373505b27",
     "url": "https://yardenitzhaky.github.io/keeper-app/index.html"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "https://yardenitzhaky.github.io/keeper-app/static/js/2.0ed541b6.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "6f9c30024a227fa178d2",
-    "url": "https://yardenitzhaky.github.io/keeper-app/static/js/main.be0e25f0.chunk.js"
+    "revision": "0bbf3396a5adddc54ab6",
+    "url": "https://yardenitzhaky.github.io/keeper-app/static/js/main.d462ce3e.chunk.js"
   },
   {
     "revision": "192c373f2a4980eb9e29",

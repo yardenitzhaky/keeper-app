@@ -291,6 +291,7 @@ form.create-note button {
 
 /* Input Fields */
 .auth-container input[type='text'],
+.auth-container input[type='email'],
 .auth-container input[type='password'] {
   width: 100%;
   padding: 12px 15px;
