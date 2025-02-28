@@ -639,35 +639,69 @@ app.post('/add', async (req, res) => {
 
 app.post('/classify-text', async (req, res) => {
   const { title, content } = req.body;
-
+  
+  // Better validation - check both title and content
   if (!title && !content) {
-    return res.status(400).json({ error: 'No text provided' });
+    return res.status(400).json({ 
+      success: false,
+      error: 'No text provided', 
+      category: 'Uncategorized' 
+    });
   }
-
+  
   try {
-    const fullText = `${title} ${content}`;
-    // Call the Flask service
+    // Combine title and content, handling nulls
+    const fullText = `${title || ''} ${content || ''}`.trim();
+    
+    // Add timeout to fetch to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+    
+    // Call the Flask service with timeout
     const response = await fetch(`${FLASK_SERVICE_URL}/classify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ text: fullText }),
+      signal: controller.signal
     });
-
+    
+    // Clear the timeout
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error(`Flask service returned ${response.status}`);
+      throw new Error(`Flask service returned ${response.status}: ${response.statusText}`);
     }
-
+    
     const result = await response.json();
-    res.json(result);
+    
+    // Validate response structure
+    if (!result || typeof result.category !== 'string') {
+      throw new Error('Invalid response from classification service');
+    }
+    
+    res.json({
+      category: result.category,
+      success: true
+    });
   } catch (error) {
     console.error('Classification error:', error);
     
-    // Fallback to default category if classification fails
-    res.json({ 
+    // Handle specific error types
+    let errorMessage = 'Classification failed, using default category';
+    
+    if (error.name === 'AbortError') {
+      errorMessage = 'Classification service timed out';
+    } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      errorMessage = 'Classification service unavailable';
+    }
+    
+    // Always return a valid response, even on error
+    res.json({
       category: 'Uncategorized',
-      error: 'Classification failed, using default category'
+      success: false,
+      error: errorMessage
     });
   }
 });
