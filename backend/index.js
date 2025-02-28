@@ -655,7 +655,7 @@ app.post('/classify-text', async (req, res) => {
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
     
     // Call the Flask service with timeout
-    const response = await fetch(`${FLASK_SERVICE_URL}/classify`, {
+    const response = await fetch("https://keeper-model.onrender.com/classify", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
