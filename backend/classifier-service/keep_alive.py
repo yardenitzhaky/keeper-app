@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class KeepAliveService:
-    def __init__(self, url, interval_minutes=14):
+    def __init__(self, url, interval_minutes=9):
         self.url = url
         self.interval_minutes = interval_minutes
         self.is_running = False
