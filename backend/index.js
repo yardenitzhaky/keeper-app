@@ -53,7 +53,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const corsOptions = {
     // Specify allowed origin for cross-origin requests
-    origin: 'https://yardenitzhaky.github.io/keeper-app/',
+    origin: 'https://yardenitzhaky.github.io',
     credentials: true,
     // Allowed HTTP methods
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
