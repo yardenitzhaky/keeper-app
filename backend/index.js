@@ -31,7 +31,7 @@ import fetch from 'node-fetch';
 // Add this configuration
 const FLASK_SERVICE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://keeper-model.onrender.com'  // Production URL
-  : 'http://localhost:5000';              // Development URL
+  : 'https://yardenitzhaky.github.io/keeper-app/';              // Development URL
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
@@ -53,7 +53,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const corsOptions = {
     // Specify allowed origin for cross-origin requests
-    origin: 'https://keeper-frontend-36zj.onrender.com',
+    origin: 'https://yardenitzhaky.github.io/keeper-app/',
     credentials: true,
     // Allowed HTTP methods
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
