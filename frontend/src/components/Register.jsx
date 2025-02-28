@@ -173,7 +173,7 @@ function Register() {
   
   return (
     <div className="auth-container" role="main" aria-labelledby="register-title">
-      <img src="%PUBLIC_URL%/images/logo.PNG" alt="Application logo" className="logo" />
+      <img src={`${process.env.PUBLIC_URL}/images/logo.PNG`} alt="App Logo"  className="logo" />
       <h2 id="register-title">Register</h2>
       
       <form onSubmit={handleRegister} noValidate>
