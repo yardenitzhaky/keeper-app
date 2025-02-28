@@ -1,12 +1,12 @@
 # 📝 Keeper App
 
-[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://keeper-frontend-36zj.onrender.com)
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://yardenitzhaky.github.io/keeper-app/)
 [![React](https://img.shields.io/badge/react-v18.3.1-blue)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/node-v18+-green)](https://nodejs.org/)
 
 **Keeper App** is a full-stack web application inspired by Google Keep, designed to help users manage and organize their notes efficiently. With a modern UI/UX, robust authentication, and smart categorization features, Keeper App provides a seamless note-taking experience.
 
-**[✨ Try the Live Demo](https://keeper-frontend-36zj.onrender.com)**
+**[✨ Try the Live Demo](https://yardenitzhaky.github.io/keeper-app/)**
 
 ## 🚀 Features
 

@@ -448,7 +448,7 @@ app.post('/forgot-password', async (req, res) => {
     );
 
     // Send reset email
-    const resetUrl = `https://keeper-frontend-36zj.onrender.com/reset-password/${token}`;
+    const resetUrl = `https://yardenitzhaky.github.io/keeper-app/reset-password/${token}`;
 
     const mailOptions = {
       to: email,
@@ -695,10 +695,10 @@ app.get('/auth/google/callback',
     req.login(req.user, (err) => {
       if (err) {
         console.error("Error logging in the user after Google authentication:", err);
-        return res.redirect('https://keeper-frontend-36zj.onrender.com/login?error=auth_failed');
+        return res.redirect('https://yardenitzhaky.github.io/keeper-app/login?error=auth_failed');
       }
       req.session.save(() => {
-        res.redirect(isProduction ? 'https://keeper-frontend-36zj.onrender.com' : 'http://localhost:5173');
+        res.redirect(isProduction ? 'https://yardenitzhaky.github.io/keeper-app/' : 'http://localhost:5173');
       })
     });
   }
