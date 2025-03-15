@@ -4,6 +4,11 @@
 
 **[✨ Try the Live Demo](https://yardenitzhaky.github.io/keeper-app/)**
 
+## 📌 Project Diagram  
+
+![Keeper App Architecture](https://www.mermaidchart.com/raw/24029484-a27a-4763-9c63-56f0cf85581b?theme=light&version=v0.1&format=svg)
+
+
 ## 🚀 Features
 
 ### Core Functionality
