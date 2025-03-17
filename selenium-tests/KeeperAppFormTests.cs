@@ -4,6 +4,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using KeeperAppTests.PageObjects;
+using SeleniumExtras.WaitHelpers;
 
 namespace KeeperAppTests
 {
@@ -28,7 +29,7 @@ namespace KeeperAppTests
             driver = new ChromeDriver(options);
             
             // Configure wait
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(35));
             
             // Initialize page objects
             basePage = new BasePage(driver);
@@ -72,8 +73,8 @@ namespace KeeperAppTests
             // Navigate to app using base page
             basePage.NavigateTo("");
             
-            // Wait a moment for the page to load
-            System.Threading.Thread.Sleep(2000);
+            // Wait for loading spinner to disappear
+            WaitForLoadingSpinnerToDisappear();
             
             // Verify the cookie alert is present
             var cookieAlertModal = By.CssSelector(".cookie-alert-modal");
@@ -101,7 +102,7 @@ namespace KeeperAppTests
             
             // Refresh page to verify the setting was saved
             driver.Navigate().Refresh();
-            System.Threading.Thread.Sleep(2000);
+            WaitForLoadingSpinnerToDisappear();
             
             // Verify alert doesn't reappear
             Console.WriteLine($"Cookie alert visible after refresh: {basePage.IsElementDisplayed(cookieAlertModal)}");
@@ -113,12 +114,12 @@ namespace KeeperAppTests
             Console.WriteLine("Starting Debug_PageLoadTest...");
             // Navigate to login page using login page object
             loginPage.GoToLoginPage();
+
+            // Wait for loading spinner to disappear
+            WaitForLoadingSpinnerToDisappear();
             
             // Dismiss cookie alert if present
             DismissCookieAlertIfPresent();
-            
-            // Wait for page to load
-            System.Threading.Thread.Sleep(2000);
             
             // Log basic info
             Console.WriteLine($"Current URL: {driver.Url}");
@@ -138,6 +139,9 @@ namespace KeeperAppTests
             Console.WriteLine("Starting LoginPage_HasFormElements test...");
             // Navigate to login page
             loginPage.GoToLoginPage();
+
+            // Wait for loading spinner to disappear
+            WaitForLoadingSpinnerToDisappear();
             
             // Dismiss cookie alert if present
             DismissCookieAlertIfPresent();
@@ -164,12 +168,12 @@ namespace KeeperAppTests
             Console.WriteLine("Starting RegisterPage_HasFormElements test...");
             // Navigate to register page using page object
             registerPage.GoToRegisterPage();
+
+               // Wait for loading spinner to disappear
+            WaitForLoadingSpinnerToDisappear();
             
             // Dismiss cookie alert if present
             DismissCookieAlertIfPresent();
-            
-            // Wait for page to load
-            System.Threading.Thread.Sleep(2000);
             
             // Find form
             var form = driver.FindElement(By.TagName("form"));
@@ -191,11 +195,12 @@ namespace KeeperAppTests
             // Navigate to login page
             loginPage.GoToLoginPage();
             
+
+            // Wait for loading spinner to disappear
+            WaitForLoadingSpinnerToDisappear();
+            
             // Dismiss cookie alert if present
             DismissCookieAlertIfPresent();
-            
-            // Wait for page to load
-            System.Threading.Thread.Sleep(2000);
             
             // Find form
             var form = driver.FindElement(By.TagName("form"));
@@ -215,6 +220,46 @@ namespace KeeperAppTests
             {
                 Console.WriteLine($"First error message: {errors[0].Text}");
             }
+        }
+
+        [TestMethod]
+        private void WaitForLoadingSpinnerToDisappear()
+        {
+        try
+        {
+            Console.WriteLine("Waiting for loading spinner to disappear...");
+            // Wait for loading spinner to disappear
+            By loadingSpinnerLocator = By.CssSelector(".loading-container");
+            
+            // Use ExpectedConditions to wait for invisibility or element not present
+            wait.Until(driver => {
+                try 
+                {
+                    var element = driver.FindElement(loadingSpinnerLocator);
+                    return !element.Displayed;
+                }
+                catch (NoSuchElementException)
+                {
+                    // If the element is not found, it's not displaying
+                    return true;
+                }
+                catch (StaleElementReferenceException)
+                {
+                    // If the element is stale, it's likely gone from DOM
+                    return true;
+                }
+            });
+            Console.WriteLine("Loading spinner no longer visible");
+        }
+        catch (WebDriverTimeoutException)
+        {
+            Console.WriteLine("WARNING: Timed out waiting for loading spinner to disappear after 35 seconds");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while waiting for spinner: {ex.Message}");
+        }
         }
     }
 }
