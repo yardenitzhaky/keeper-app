@@ -336,9 +336,3 @@ logs
 
 *.sln
 
-backend/ml/
-
-note_classifier.joblib
-text_classification_dataset.csv
-backend/classifier-service/note_classifier.joblib
-backend/classifier-service/text_classification_dataset.csv
