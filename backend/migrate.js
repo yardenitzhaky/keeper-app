@@ -8,7 +8,6 @@ const __dirname = dirname(__filename);
 
 dotenv.config(); 
 
-
 const isProduction = process.env.NODE_ENV === 'production';
 
 let connectionConfig;
@@ -40,15 +39,16 @@ if (isProduction) {
 // Create database pool
 const db = new pg.Pool(connectionConfig);
 
-const runMigrations = async () => { // Renamed function for clarity
+const runMigrations = async () => {
+  let client;
   try {
     console.log('Connecting to the database for migrations...');
-    await db.connect(); 
+    client = await db.connect(); // Get a client from the pool
     console.log('Database connection established.');
 
     // --- CREATE TABLES ---
     // Use IF NOT EXISTS to make the script idempotent for table creation
-    await db.query(`
+    await client.query(`
       -- Create Users table
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -82,6 +82,7 @@ const runMigrations = async () => { // Renamed function for clarity
       -- Create index for session table (improves lookup performance)
       CREATE UNIQUE INDEX IF NOT EXISTS IDX_SESSION_SID ON session (sid);
     `);
+    
     console.log('Users table created successfully (or already existed).');
     console.log('Notes table created successfully (or already existed).');
     console.log('Session table created successfully (or already existed).');
@@ -91,26 +92,31 @@ const runMigrations = async () => { // Renamed function for clarity
     // Add the category column if it doesn't exist in the *existing* notes table
     // This handles cases where the table was created by an older migrate script version
     console.log('Ensuring category column exists in notes table...');
-    await db.query(`
+    await client.query(`
       ALTER TABLE notes 
       ADD COLUMN IF NOT EXISTS category VARCHAR(255) DEFAULT 'Uncategorized';
     `);
     console.log('Category column migration complete.');
+    console.log('All migrations completed successfully!');
 
     // --- Add other ALTER TABLE or data seed statements here as your schema evolves ---
     // Example: Add an index to user_id on notes table if needed for performance
-    // await db.query(`CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes (user_id);`);
+    // await client.query(`CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes (user_id);`);
 
   } catch (err) {
     console.error('Error during migration:', err);
-    // Decide if you want to exit on error depending on severity
-    // process.exit(1);
+    process.exit(1); // Exit with error code
   } finally {
-    // Close the pool after migrations are done.
-    // This script is designed to run as a one-off process before the main app starts.
-    await db.end(); 
+    // Release the client back to the pool
+    if (client) {
+      client.release();
+      console.log('Database client released.');
+    }
+    // Close the pool
+    await db.end();
     console.log('Database connection closed.');
+    process.exit(0); // Exit successfully
   }
 };
 
-runMigrations(); // Execute the migration function
+runMigrations(); // Execute
