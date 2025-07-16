@@ -14,7 +14,7 @@ import LoadingButton from "./LoadingButton";
 axios.defaults.withCredentials = true;
 
 // API configuration
-const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = 'https://keeper-app-bakcend-and-db.onrender.com';
 
 // Password validation regex
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;

@@ -12,7 +12,7 @@ import LoadingSpinner from "./LoadingSpinner";
 axios.defaults.withCredentials = true;
 
 // Constants
-const API_URL = 'https://keeper-backend-kgj9.onrender.com';
+const API_URL = 'https://keeper-app-bakcend-and-db.onrender.com';
 
 /**
  * Login Component
