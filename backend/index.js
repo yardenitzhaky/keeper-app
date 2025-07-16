@@ -737,7 +737,7 @@ app.get('/auth/google/callback',
         return res.redirect('https://yardenitzhaky.github.io/keeper-app/login?error=auth_failed');
       }
       req.session.save(() => {
-        res.redirect(isProduction ? 'https://yardenitzhaky.github.io/keeper-app/' : 'http://localhost:5173');
+        res.redirect(isProduction ? 'https://yardenitzhaky.github.io/keeper-app/?google_auth=success' : 'http://localhost:5173/?google_auth=success');
       })
     });
   }
