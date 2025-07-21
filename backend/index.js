@@ -24,6 +24,8 @@ import dotenv from 'dotenv';
 
 // Initialize Express application
 const app = express();
+app.set('trust proxy', 1);
+
 
 import { spawn } from 'child_process';
 import fetch from 'node-fetch';
@@ -95,8 +97,6 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Trust first proxy in production
-app.set('trust proxy', 1);
 
 // ============================================================================
 // SESSION CONFIGURATION
@@ -122,9 +122,6 @@ app.use(
             secure: isProduction,              // Secure in production
             httpOnly: true,                    // Prevent XSS
             sameSite: 'none',                 // Required for cross-site cookies
-            domain: process.env.NODE_ENV === 'production' 
-                ? 'keeper-backend-kgj9.onrender.com' 
-                : 'localhost',
         },
         name: 'keeper.sid',  // Custom session cookie name
     })
@@ -737,7 +734,7 @@ app.get('/auth/google/callback',
         return res.redirect('https://yardenitzhaky.github.io/keeper-app/login?error=auth_failed');
       }
       req.session.save(() => {
-        res.redirect(isProduction ? 'https://yardenitzhaky.github.io/keeper-app/?google_auth=success' : 'http://localhost:5173/?google_auth=success');
+        res.redirect(isProduction ? 'https://yardenitzhaky.github.io/keeper-app/#/google-callback' : 'http://localhost:5173/google-callback');
       })
     });
   }
