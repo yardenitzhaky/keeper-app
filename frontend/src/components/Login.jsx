@@ -47,23 +47,6 @@ function Login() {
   // EFFECTS
   // ============================================================================
 
-  // Handle Google OAuth redirect
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const googleAuth = queryParams.get('google_auth');
-    
-    if (googleAuth === 'success') {
-      handleGoogleAuthSuccess()
-        .then(() => navigate('/notes'))
-        .catch(error => {
-          console.error("Google auth error:", error);
-          setErrors({ 
-            server: "Failed to authenticate with Google. Please try again." 
-          });
-        });
-    }
-  }, [location, handleGoogleAuthSuccess, navigate]);
-
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
