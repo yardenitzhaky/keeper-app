@@ -54,7 +54,7 @@ function Login() {
     
     if (googleAuth === 'success') {
       handleGoogleAuthSuccess()
-        .then(() => navigate('/'))
+        .then(() => navigate('/notes'))
         .catch(error => {
           console.error("Google auth error:", error);
           setErrors({ 
